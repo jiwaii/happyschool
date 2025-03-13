@@ -1,0 +1,20 @@
+{% extends "core/base_vue.html" %}
+
+{% load vite %}
+menu
+{% block header %}
+<title>HappySchool : Bulletin</title>
+{% vite %}
+{% vite "report/js/report.js" %}
+
+{% endblock %}
+
+{% block content %}
+<p>{{ test }}</p>
+<script>
+    const menu = {{ menu|safe }};
+
+</script>
+<div id="vue-app"></div>
+
+{% endblock %}

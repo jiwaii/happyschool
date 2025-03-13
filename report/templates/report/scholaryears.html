@@ -1,0 +1,18 @@
+{% extends "core/base_vue.html" %}
+
+
+{% load vite %}
+
+{% block header %}
+<title>Bulletin - Année scolaire </title>
+
+{% vite %}
+{% vite "report/js/report.js" %}
+
+{% endblock %}
+
+{% block content %}
+
+{% comment %} <p>{{ test }}</p> {% endcomment %}
+<div id="vue-app"></div>
+{% endblock %}
