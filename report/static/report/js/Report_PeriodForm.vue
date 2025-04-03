@@ -4,6 +4,7 @@
             <b-row>
                 <h2>Bulletin: Nouvelle Periode</h2>
             </b-row>
+
             <b-row>
                 <b-form
                     @submit="submit"
@@ -16,9 +17,9 @@
                                     label="Commence le"
                                     label-for="input-dateStart"
                                 >
-                                    <b-form-datepicker
+                                    <BFormInput
                                         id="input-dateStart"
-                                        type="text"
+                                        type="date"
                                         v-model="form.dateStart"
                                     />
                                 </b-form-group>
@@ -28,9 +29,9 @@
                                     label="Termine le"
                                     label-for="input-dateEnd"
                                 >
-                                    <b-form-datepicker
+                                    <BFormInput
                                         id="input-dateEnd"
-                                        type="text"
+                                        type="date"
                                         :min="form.dateStart"
                                         v-model="form.dateEnd"
                                     />
@@ -56,13 +57,21 @@
                                     label="Année scolaire"
                                     label-for="input-scholarYear"
                                 >
-                                    <b-form-select
-                                        id="input-scholarYear"
+                                    <BFormSelect
                                         v-model="form.scholarYear"
                                         :options="scholaryearOptions"
                                         value-field="id"
-                                        text-field="label"
-                                    />
+                                        text-field="labelYear"
+                                    >
+                                        <template #first>
+                                            <option
+                                                :value="null"
+                                                disabled
+                                            >
+                                                Choisissez l'année
+                                            </option>
+                                        </template>
+                                    </BFormSelect>
                                 </b-form-group>
                             </b-col>
                         </b-row>
@@ -101,6 +110,7 @@
 
 // import { options } from "@fullcalendar/core/preact.js";
 import axios from "axios";
+// import { BRow } from "bootstrap-vue-next";
 import Moment from "moment";
 import "moment/dist/locale/fr";
 Moment.locale("fr");
@@ -120,10 +130,16 @@ export default {
                 periodNum: "",
                 dateStart: "",
                 dateEnd: "",
-                scholarYear:""
+                scholarYear:null
             },
             noExist: null,
-            scholaryearOptions:[]
+            scholaryearOptions:[],
+            maList:["coco","popo","jojo",{
+                "id": 1,
+                "labele": "2024-2025",
+                "dateStart": "2024-08-26",
+                "dateEnd": "2025-08-25"
+            }]
         };
     },
     methods: {
@@ -162,6 +178,14 @@ export default {
                 .then(response =>{
                     if(response.data){
                         this.scholaryearOptions = response.data.results;
+                        console.log(this.scholaryearOptions);
+
+                        let myMap = this.scholaryearOptions.map(item => {
+                            item.labelYear = item.label;
+                            delete item.label;
+                            return item;
+                        });
+                        console.log(myMap);
                     }});
         },
         delete: function(){
