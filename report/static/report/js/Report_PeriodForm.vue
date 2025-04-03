@@ -56,7 +56,7 @@
                                         v-model="form.dateEnd"
                                     />
                                 </b-form-group>
-                                
+
                                 <b-form-group
                                     label="Numero de période"
                                     label-for="input-periodNum"
@@ -164,7 +164,7 @@ export default {
             return Moment(date).calendar();
         },
         submit: function () {
-            if(this.checkPeriodeAndScholaryear()){            
+            if(this.checkPeriodeAndScholaryear()){
                 if(this.id != "0"){
                     axios.put(`api/period/${this.id}/`,this.form,token).then(
                         () => {
@@ -173,7 +173,7 @@ export default {
                         (error) =>{
                             console.log(error);
                         });
-                
+
                 }else{
                     console.log("post");
                     axios.post("api/period/",this.form,token).then((response) => {
@@ -199,7 +199,7 @@ export default {
             axios.delete(`api/period/${this.id}/`,token);
             this.$router.push("/periods/");
         },
-         
+
         loadItem(){
             axios.get(`api/period/${this.id}/`,token)
                 .then(response =>{
