@@ -22,7 +22,6 @@ class ScholaryearSerializer(serializers.ModelSerializer):
         fields = ['id','label','dateStart','dateEnd']
         
 class PeriodSerializer(serializers.ModelSerializer):
-    scholarYear = ScholaryearSerializer(read_only=True)
-    class Meta:
+       class Meta:
         model = Period
         fields = ['id','periodNum','dateStart','dateEnd','scholarYear']
