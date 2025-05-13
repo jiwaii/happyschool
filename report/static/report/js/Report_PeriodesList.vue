@@ -25,7 +25,7 @@
             >
                 <b-col>
                     <h5>
-                        période {{ period.periodNum }} ({{ period.scholarYear.label }})  
+                        Période {{ period.periodNum }} ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }})  
                     </h5>
                 </b-col>
                 <b-col>
@@ -34,14 +34,14 @@
 
                 <b-col style="text-align: right;">
                     <div class="text-right">
-                        <b-btn
+                        <BLink
                             variant="outline-primary"
                             size="sm"
                             :to="'/period_edit/' + period.id + '/'"
                             class="card-link"
                         >
                             Modifier
-                        </b-btn>
+                        </BLink>
                     </div>
                     <!-- <a
                         :href="`#/`"
@@ -59,6 +59,7 @@
 <script>
 
 import axios from "axios";
+// import { BLink } from "bootstrap-vue-next";
 import Moment from "moment";
 import "moment/dist/locale/fr";
 Moment.locale("fr");
@@ -68,6 +69,7 @@ export default{
         return {
             periodEntries : [],
             periodEntriesCount: 0,
+            scholarYears : [],
         };
     },
     methods:{
@@ -80,11 +82,34 @@ export default{
                     this.loaded = true;
                 });
         },
+        loadScolaryears: function(){
+            axios.get("api/scholaryear_exist")
+                .then(response =>{
+                    
+                    this.scholarYears = response.data.results.map(item => {
+                        //item[item.id] = item.label;
+                        item.value = item.label;
+                        //delete item.id;
+                        delete item.label;
+                        delete item.dateEnd;
+                        delete item.dateStart;
+                        return item;
+                    });
+                    console.log("scholarYears:");
+                    console.log(this.scholarYears);
+                    
+                });
+            
+        },
+        findScholarYear: function(id){
+            return this.scholarYears.find(id);
+        },
         convertDateFr: function(date){
             return Moment(date).calendar();
         }
     },
     mounted:function(){
+        this.loadScolaryears();
         this.loadEntries();
     }
 };
