@@ -25,7 +25,8 @@
             >
                 <b-col>
                     <h5>
-                        Période {{ period.periodNum }} ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }})  
+                        Période {{ period.periodNum }} ({{ scholarYears[period.scholarYear] }})                        
+                        <!-- ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }}) -->
                     </h5>
                 </b-col>
                 <b-col>
@@ -73,33 +74,32 @@ export default{
         };
     },
     methods:{
+
         loadEntries: function(){
-            axios.get("api/period/")
+            return axios.get("api/period/")
                 .then(response =>{
-                    console.log(response);
                     this.periodEntries = response.data.results;
                     this.periodEntriesCount = response.data.count;
                     this.loaded = true;
+                    console.log("periods :");
+                    console.log(this.periodEntries);
                 });
+            
         },
         loadScolaryears: function(){
-            axios.get("api/scholaryear_exist")
+            return axios.get("api/scholaryear_exist")
                 .then(response =>{
-                    
-                    this.scholarYears = response.data.results.map(item => {
-                        //item[item.id] = item.label;
-                        item.value = item.label;
-                        //delete item.id;
+                    response.data.results.map(item => {
+                        this.scholarYears[item.id] = item.label;
+                        item[item.id] = item.label;
+                        //item.value = item.label;
+                        delete item.id;
                         delete item.label;
                         delete item.dateEnd;
                         delete item.dateStart;
-                        return item;
                     });
-                    console.log("scholarYears:");
                     console.log(this.scholarYears);
-                    
                 });
-            
         },
         findScholarYear: function(id){
             return this.scholarYears.find(id);
@@ -109,8 +109,10 @@ export default{
         }
     },
     mounted:function(){
-        this.loadScolaryears();
         this.loadEntries();
+        this.loadScolaryears();
+        
+        
     }
 };
 </script>
