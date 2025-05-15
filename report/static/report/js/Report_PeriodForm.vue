@@ -2,7 +2,7 @@
     <div style="margin: 50px;">
         <div>
             <b-row>
-                <h2>Bulletin: Nouvelle Periode</h2>
+                <h2>Bulletin: {{ (this.id > 0) ? "Modifier":"Nouvelle" }} Periode</h2>
             </b-row>
 
             <b-row>
@@ -130,16 +130,10 @@ export default {
                 periodNum: "",
                 dateStart: "",
                 dateEnd: "",
-                scholarYear:null
+                scholarYear:"",
             },
             noExist: null,
             scholaryearOptions:[],
-            maList:["coco","popo","jojo",{
-                "id": 1,
-                "labele": "2024-2025",
-                "dateStart": "2024-08-26",
-                "dateEnd": "2025-08-25"
-            }]
         };
     },
     methods: {
@@ -147,14 +141,22 @@ export default {
             return Moment(date).calendar();
         },
         submit: function () {
-            if(this.id != "0"){
-                axios.put(`api/period/${this.id}/`,this.form,token);
-                this.$router.push("/periods/");
-            }else{
-                axios.post("api/period/",this.form,token);
-                this.$router.push("/periods/");
+            console.log("submit period :");
+            if(this.checkPeriodeAndScholaryear()){            
+                if(this.id != "0"){
+                    axios.put(`api/period/${this.id}/`,this.form,token).then(
+                        () => {
+                            this.$router.push("/periods/");
+                        }).catch(
+                        (error) =>{
+                            console.log(error);
+                        });
+                
+                }else{
+                    axios.post("api/period/",this.form,token);
+                    this.$router.push("/periods/");
+                }
             }
-            console.log("submit period");
         },
         deleteItem : function(){
             console.log("delete id : "+this.id);
@@ -169,7 +171,7 @@ export default {
                         this.form.periodNum = response.data.periodNum;
                         this.form.dateStart = response.data.dateStart;
                         this.form.dateEnd = response.data.dateEnd;
-                        this.form.scholarYear = response.data.scholarYear.id;
+                        this.form.scholarYear = response.data.scholarYear;
                     }
                 });
         },
@@ -190,7 +192,20 @@ export default {
         },
         delete: function(){
             //
-        }
+        },
+        checkPeriodeAndScholaryear: function(){
+            var scholarYearSelected = this.scholaryearOptions.find((scholarYear) => scholarYear.id === this.form.scholarYear);
+            console.log(scholarYearSelected.dateEnd);
+            if (this.form.dateStart < scholarYearSelected.dateStart){
+                alert("Date de DÉBUT de période ("+this.form.dateStart+") est inférieur à la date d'entrés scolaire "+scholarYearSelected.dateStart);
+                return false;
+            }else if(this.form.dateEnd > scholarYearSelected.dateEnd){
+                alert("Date de FIN de période ("+this.form.dateEnd+") est supérieur à la date de sortie scolaire "+scholarYearSelected.dateEnd);
+                return false;
+            }else{
+                return true;
+            }
+        },
     },
     mounted: function () {
         if(this.id != "0") this.loadItem();

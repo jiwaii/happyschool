@@ -101,6 +101,8 @@ class ScholaryearValidation(ModelViewSet):
 class Period(ModelViewSet):
     queryset = Period.objects.all()
     serializer_class = PeriodSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['periodNum']
     
     
     

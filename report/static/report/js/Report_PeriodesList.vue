@@ -25,7 +25,10 @@
             >
                 <b-col>
                     <h5>
-                        Période {{ period.periodNum }} ({{ scholarYears[period.scholarYear] }})                        
+                        Période 
+                        <BBadge>
+                            {{ period.periodNum }}
+                        </BBadge> ({{ scholarYears[period.scholarYear] }})                        
                         <!-- ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }}) -->
                     </h5>
                 </b-col>
@@ -74,7 +77,6 @@ export default{
         };
     },
     methods:{
-
         loadEntries: function(){
             return axios.get("api/period/")
                 .then(response =>{
@@ -84,7 +86,6 @@ export default{
                     console.log("periods :");
                     console.log(this.periodEntries);
                 });
-            
         },
         loadScolaryears: function(){
             return axios.get("api/scholaryear_exist")
