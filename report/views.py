@@ -7,6 +7,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import filters
 from rest_framework.views import APIView 
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -101,9 +102,9 @@ class ScholaryearValidation(ModelViewSet):
 class Period(ModelViewSet):
     queryset = Period.objects.all()
     serializer_class = PeriodSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['periodNum']
-    
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter]
+    filterset_fields = ['periodNum','scholarYear__id']
+    search_fields = ['scholarYear__label']
     
     
     # def post(self,request,format=None):

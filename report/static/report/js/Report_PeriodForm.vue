@@ -199,12 +199,13 @@ export default {
             if (this.form.dateStart < scholarYearSelected.dateStart){
                 alert("Date de DÉBUT de période ("+this.form.dateStart+") est inférieur à la date d'entrés scolaire "+scholarYearSelected.dateStart);
                 return false;
-            }else if(this.form.dateEnd > scholarYearSelected.dateEnd){
+            } else if(this.form.dateEnd > scholarYearSelected.dateEnd){
                 alert("Date de FIN de période ("+this.form.dateEnd+") est supérieur à la date de sortie scolaire "+scholarYearSelected.dateEnd);
                 return false;
-            }else{
+            } else{
                 return true;
             }
+            // VOIR ENCHEVAUCHEMENT ENTRE PERIODE AUSSI
         },
     },
     mounted: function () {

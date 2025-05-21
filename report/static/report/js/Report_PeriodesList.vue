@@ -5,10 +5,10 @@
                 <h2>Bulletin: Périodes</h2>
             </b-row>
 
-            <b-row>
-                <b-col
-                    cols="12"
-                    sm="3"
+            <BRow>
+                <BCol
+                    cols="6"
+                    sm="2"
                 >
                     <b-button
                         variant="success"
@@ -16,8 +16,38 @@
                     >
                         Ajouter +
                     </b-button>
-                </b-col>
-            </b-row>
+                </BCol>
+                <BCol cols="2">
+                    <b-form-input
+                        placeholder="# période"
+                        @keyup.enter="this.search"
+                        id="input-scholarYearlabel"
+                        type="text"
+                        size="lg"
+                        v-model="keyword"
+                    />
+                </BCol>
+                <BCol cols="4">
+                    <BFormSelect
+                        v-model="scholarYearsSelected"
+                        :options="scholarYearsOptions"
+                        value-field="id"
+                        text-field="name"
+                        size="lg"
+                        class="mb-3"
+                        @change="search"
+                    >
+                        <template #first>
+                            <BFormSelectOption
+                                :value="null"
+                                disabled
+                            >
+                                Choisir l'année scolaire
+                            </BFormSelectOption>
+                        </template>
+                    </BFormSelect>
+                </BCol>
+            </BRow>
             <b-row
                 class="card px-4 mt-2"
                 v-for="period in periodEntries"
@@ -63,9 +93,11 @@
 <script>
 
 import axios from "axios";
+//import { BCol } from "bootstrap-vue-next";
 // import { BLink } from "bootstrap-vue-next";
 import Moment from "moment";
 import "moment/dist/locale/fr";
+import {ref} from "vue";
 Moment.locale("fr");
 
 export default{
@@ -74,6 +106,13 @@ export default{
             periodEntries : [],
             periodEntriesCount: 0,
             scholarYears : [],
+            scholarYearsOptions : [],
+            scholarYearsSelected: ref(null),
+            keyword : "",
+            search : () => {
+                console.log(this.keyword);
+                this.findEntries();
+            },
         };
     },
     methods:{
@@ -90,20 +129,31 @@ export default{
         loadScolaryears: function(){
             return axios.get("api/scholaryear_exist")
                 .then(response =>{
+                    this.scholarYearsOptions = response.data.results;
                     response.data.results.map(item => {
                         this.scholarYears[item.id] = item.label;
-                        item[item.id] = item.label;
+                        //item[item.id] = item.label;
                         //item.value = item.label;
-                        delete item.id;
+                        // delete item.id;
+                        
+                        item.name = item.label; 
                         delete item.label;
                         delete item.dateEnd;
                         delete item.dateStart;
                     });
-                    console.log(this.scholarYears);
+                    
+                    console.log(this.scholarYearsOptions);
                 });
         },
-        findScholarYear: function(id){
-            return this.scholarYears.find(id);
+        findEntries: function(){
+            return axios.get(`api/period/?periodNum=${this.keyword}&scholarYear__id=${this.scholarYearsSelected}`)
+                .then(response =>{
+                    this.periodEntries = response.data.results;
+                    this.periodEntriesCount = response.data.count;
+                    this.loaded = true;
+                    console.log("periods :");
+                    console.log(this.periodEntries);
+                });
         },
         convertDateFr: function(date){
             return Moment(date).calendar();
