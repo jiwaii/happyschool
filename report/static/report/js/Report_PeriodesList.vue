@@ -17,17 +17,8 @@
                         Ajouter +
                     </b-button>
                 </BCol>
-                <BCol cols="2">
-                    <b-form-input
-                        placeholder="# période"
-                        @keyup.enter="this.search"
-                        id="input-scholarYearlabel"
-                        type="text"
-                        size="lg"
-                        v-model="keyword"
-                    />
-                </BCol>
-                <BCol cols="4">
+               
+                <BCol cols="3">
                     <BFormSelect
                         v-model="scholarYearsSelected"
                         :options="scholarYearsOptions"
@@ -46,6 +37,16 @@
                             </BFormSelectOption>
                         </template>
                     </BFormSelect>
+                </BCol>
+                <BCol cols="2">
+                    <b-form-input
+                        placeholder="# période"
+                        @keyup.enter="this.search"
+                        id="input-scholarYearlabel"
+                        type="number"
+                        size="lg"
+                        v-model="keyword"
+                    />
                 </BCol>
             </BRow>
             <b-row
