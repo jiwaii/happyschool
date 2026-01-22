@@ -1,4 +1,12 @@
 <template>
+    <!-- <BToast
+        v-model="showToast"
+        variant="info"
+        solid
+    >
+        <template #title> Mon Toast</template>
+        {{ scholarYears[scholarYearsSelected]}} As tu vu mon toast ? 
+    </BToast> -->
     <div style="margin: 50px;">
         <div>
             <b-row>
@@ -30,22 +38,24 @@
                     >
                         <template #first>
                             <BFormSelectOption
-                                :value="null"
+                                value=""
                                 disabled
                             >
-                                Choisir l'année scolaire
+                                Année scolaire
                             </BFormSelectOption>
                         </template>
                     </BFormSelect>
                 </BCol>
                 <BCol cols="2">
                     <b-form-input
-                        placeholder="# période"
-                        @keyup.enter="this.search"
+                        placeholder="Période"
+                        @change="this.search"
                         id="input-scholarYearlabel"
                         type="number"
                         size="lg"
                         v-model="keyword"
+                        min="1"
+                        max="9"
                     />
                 </BCol>
             </BRow>
@@ -59,7 +69,8 @@
                         Période 
                         <BBadge>
                             {{ period.periodNum }}
-                        </BBadge> ({{ scholarYears[period.scholarYear] }})                        
+                        </BBadge> 
+                        ({{ scholarYears[period.scholarYear] }})  {{ classeGroups[period.classeGroup] }}                      
                         <!-- ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }}) -->
                     </h5>
                 </b-col>
@@ -69,14 +80,14 @@
 
                 <b-col style="text-align: right;">
                     <div class="text-right">
-                        <BLink
+                        <b-link
                             variant="outline-primary"
                             size="sm"
                             :to="'/period_edit/' + period.id + '/'"
                             class="card-link"
                         >
                             Modifier
-                        </BLink>
+                        </b-link>
                     </div>
                     <!-- <a
                         :href="`#/`"
@@ -90,6 +101,8 @@
             </b-row>
         </div>
     </div>
+    
+        
 </template>
 <script>
 
@@ -100,7 +113,6 @@ import Moment from "moment";
 import "moment/dist/locale/fr";
 import {ref} from "vue";
 Moment.locale("fr");
-
 export default{
     data: function(){
         return {
@@ -108,12 +120,14 @@ export default{
             periodEntriesCount: 0,
             scholarYears : [],
             scholarYearsOptions : [],
-            scholarYearsSelected: ref(null),
+            scholarYearsSelected: "",
+            classeGroups: [],
             keyword : "",
             search : () => {
                 console.log(this.keyword);
                 this.findEntries();
             },
+            // showToast : false,
         };
     },
     methods:{
@@ -142,11 +156,22 @@ export default{
                         delete item.dateEnd;
                         delete item.dateStart;
                     });
-                    
+                    console.log(this.scholarYears);
                     console.log(this.scholarYearsOptions);
                 });
         },
+        loadClasseGroups: function(){
+            return axios.get("api/classegroup")
+                .then(response => {
+                    // this.classeGroup = response.data.results;
+                    response.data.results.map(item => {
+                        this.classeGroups[item.id] = item.title
+                    })
+                    console.log(this.classeGroups)
+                })
+        },
         findEntries: function(){
+            // this.showToast = true;
             return axios.get(`api/period/?periodNum=${this.keyword}&scholarYear__id=${this.scholarYearsSelected}`)
                 .then(response =>{
                     this.periodEntries = response.data.results;
@@ -155,14 +180,16 @@ export default{
                     console.log("periods :");
                     console.log(this.periodEntries);
                 });
+                
         },
         convertDateFr: function(date){
             return Moment(date).calendar();
         }
     },
     mounted:function(){
-        this.loadEntries();
+        // this.loadEntries();
         this.loadScolaryears();
+        this.loadClasseGroups();
         
         
     }

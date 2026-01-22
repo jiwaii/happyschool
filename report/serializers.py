@@ -24,4 +24,9 @@ class ScholaryearSerializer(serializers.ModelSerializer):
 class PeriodSerializer(serializers.ModelSerializer):
        class Meta:
         model = Period
-        fields = ['id','periodNum','dateStart','dateEnd','scholarYear']
+        fields = ['id','periodNum','dateStart','dateEnd','scholarYear','classeGroup','classeGroupLabel']
+        
+class ClasseGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClasseGroup
+        fields = ['id','studyYear','title']

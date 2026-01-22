@@ -106,6 +106,11 @@ class Period(ModelViewSet):
     filterset_fields = ['periodNum','scholarYear__id']
     search_fields = ['scholarYear__label']
     
+class ClasseGroup(ModelViewSet):
+    queryset = ClasseGroup.objects.all()
+    serializer_class = ClasseGroupSerializer
+    filterset_fields = ['studyYear']
+    
     
     # def post(self,request,format=None):
     #     print("REQUEST DATA :")

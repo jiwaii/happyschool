@@ -5,7 +5,7 @@
                 overlay
                 img-src="/static/report/img/headbar.png"
                 img-alt="Card Image"
-                style="margin-bottom: 2%;"
+                style="margin-bottom: 1%; height: 100px ;"
                 text-variant="white"
                 title="Bulletins ISLN"
             />

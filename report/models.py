@@ -3,6 +3,10 @@ from django.contrib.auth.models import Group
 from core.models import StudentModel 
 # Create your models here.
 
+class ClasseGroup(models.Model):
+    studyYear = models.PositiveSmallIntegerField(null=False,blank=False)
+    title = models.CharField(null=False,blank=False)
+
 class ScholarYear(models.Model):
     label = models.CharField(max_length=9,null=False,blank=False)
     dateStart = models.DateField(null=False,blank=False)
@@ -13,19 +17,21 @@ class ScholarYear(models.Model):
             models.UniqueConstraint("label",name="unique_label")
         ]
 
-class ClasseGroup(models.Model):
-    studyYear = models.PositiveSmallIntegerField(null=False,blank=False)
-    title = models.CharField(null=False,blank=False)
-
 class Classe(models.Model):
     classe = models.PositiveSmallIntegerField(null=False,blank=False)
     letter = models.CharField(max_length=2,blank=False,null=False)
-
+    classeGroup = models.ForeignKey(ClasseGroup,on_delete=models.PROTECT,null=True,blank=False)
+    
 class Period(models.Model):
     periodNum = models.PositiveSmallIntegerField(null=False,blank=False)
     dateStart = models.DateField(null=False,blank=False)
     dateEnd = models.DateField(null=False,blank=False)
+    classeGroup = models.ForeignKey(ClasseGroup,on_delete=models.PROTECT,null=True,blank=False)
     scholarYear = models.ForeignKey(ScholarYear,on_delete=models.CASCADE,null=False,blank=False)
+    
+    @property
+    def classeGroupLabel(self):
+        return f'{self.classeGroup.studyYear}e année'
 
 class Course(models.Model):
     title = models.CharField(max_length=100)
