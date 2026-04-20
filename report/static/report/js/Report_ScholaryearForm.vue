@@ -2,7 +2,7 @@
     <div style="margin: 50px;">
         <div>
             <b-row>
-                <h2>Bulletin: Années scolaires edition</h2>
+                <h2>Bulletin: {{(this.id > 0) ? "Editer" : "Nouvelle" }} années scolaires</h2>
             </b-row>
             <b-row>
                 <b-form
