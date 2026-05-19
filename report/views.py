@@ -109,9 +109,15 @@ class Period(ModelViewSet):
 class ClasseGroup(ModelViewSet):
     queryset = ClasseGroup.objects.all()
     serializer_class = ClasseGroupSerializer
-    filterset_fields = ['studyYear']
+    # filterset_fields = ['studyYear']
     
+class Classe(ModelViewSet):
+    queryset = Classe.objects.all()
+    serializer_class = ClasseSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['classe','letter','classeGroup']
     
+        
     # def post(self,request,format=None):
     #     print("REQUEST DATA :")
     #     print(request.data)

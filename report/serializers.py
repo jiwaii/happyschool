@@ -27,6 +27,14 @@ class PeriodSerializer(serializers.ModelSerializer):
         fields = ['id','periodNum','dateStart','dateEnd','scholarYear','classeGroup','classeGroupLabel']
         
 class ClasseGroupSerializer(serializers.ModelSerializer):
+    classes = serializers.StringRelatedField(many=True)
+    
     class Meta:
         model = ClasseGroup
-        fields = ['id','studyYear','title']
+        # fields = "__all__"
+        fields = ['studyYear','title','classes']
+
+class ClasseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Classe
+        fields = "__all__"

@@ -20,7 +20,11 @@ class ScholarYear(models.Model):
 class Classe(models.Model):
     classe = models.PositiveSmallIntegerField(null=False,blank=False)
     letter = models.CharField(max_length=2,blank=False,null=False)
-    classeGroup = models.ForeignKey(ClasseGroup,on_delete=models.PROTECT,null=True,blank=False)
+    classeGroup = models.ForeignKey(ClasseGroup,related_name='classes',on_delete=models.PROTECT,null=True,blank=False)
+    
+    def __str__(self):
+        return f'{self.classe}{self.letter}'
+    
     
 class Period(models.Model):
     periodNum = models.PositiveSmallIntegerField(null=False,blank=False)

@@ -91,7 +91,7 @@
                 <b-col>
                     <div>
                         <router-link
-                            to="/"
+                            to="/grouped_classe/"
                             style="text-decoration: none;"
                         >
                             <b-card

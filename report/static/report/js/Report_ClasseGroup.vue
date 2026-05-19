@@ -13,7 +13,8 @@
     v-for="classeGroup in entries"
     >
         <div>
-            <h4>{{ classeGroup.title }} :</h4>
+			
+            <h4>{{ classeGroup.studyYear }} ({{ classeGroup.title }}) :</h4>
             <ClassePad
             v-for="classe in classeGroup.classes"
             :label="classe"/>
