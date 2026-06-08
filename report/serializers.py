@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from report.models import *
+from core.models import StudentModel
 
 # class ScholarYearSerializer(serializers.Serializer):
 #     id = serializers.IntegerField(read_only=True)
@@ -16,6 +17,11 @@ from report.models import *
 #         instance.dateEnd = validated_data.get('dateEnd',instance.dateEnd)
 #         return instance
 
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentModel
+        fields = ['first_name','last_name']
+
 class ScholaryearSerializer(serializers.ModelSerializer):    
     class Meta:
         model = ScholarYear
@@ -26,15 +32,25 @@ class PeriodSerializer(serializers.ModelSerializer):
         model = Period
         fields = ['id','periodNum','dateStart','dateEnd','scholarYear','classeGroup','classeGroupLabel']
         
-class ClasseGroupSerializer(serializers.ModelSerializer):
-    classes = serializers.StringRelatedField(many=True)
-    
-    class Meta:
-        model = ClasseGroup
-        # fields = "__all__"
-        fields = ['studyYear','title','classes']
-
 class ClasseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Classe
         fields = "__all__"
+        
+class ClasseGroupSerializer(serializers.ModelSerializer):
+    # classes = serializers.StringRelatedField(many=True)
+    classes = ClasseSerializer(many=True,read_only=True)
+    
+    class Meta:
+        model = ClasseGroup
+        # fields = "__all__"
+        fields = ['id','studyYear','title','classes']
+ 
+class StudentLevelSerializer(serializers.ModelSerializer):
+    student = StudentSerializer(read_only=True)
+    scholarYear = serializers.StringRelatedField()
+    classe = serializers.StringRelatedField()
+    
+    class Meta:
+        model = StudentLevel
+        fields = ['id','student','classe','scholarYear']

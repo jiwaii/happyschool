@@ -117,6 +117,12 @@ class Classe(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['classe','letter','classeGroup']
     
+class StudentLevel(ModelViewSet):
+    queryset = StudentLevel.objects.all()
+    serializer_class = StudentLevelSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['scholarYear','classe__classe']
+    
         
     # def post(self,request,format=None):
     #     print("REQUEST DATA :")

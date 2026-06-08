@@ -70,7 +70,8 @@
                         <BBadge>
                             {{ period.periodNum }}
                         </BBadge> 
-                        ({{ scholarYears[period.scholarYear] }})  {{ classeGroups[period.classeGroup] }}                      
+                        ({{ scholarYears[period.scholarYear] }}) {{ period.classeGroupLabel }}  
+                        <!-- {{ classeGroups[period.classeGroup] }}                       -->
                         <!-- ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }}) -->
                     </h5>
                 </b-col>

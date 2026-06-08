@@ -11,7 +11,7 @@
                     @reset="reset"
                 >
                     <b-card style="width: 700px;">
-                        <b-row>
+                        <b-row style="padding: 15px;">
                             <b-col>
                                 <b-form-group
                                     label="Commence le"
@@ -22,6 +22,26 @@
                                         type="date"
                                         v-model="form.dateStart"
                                     />
+                                </b-form-group>
+                                <b-form-group
+                                    label="Année d'étude"
+                                    label-for="input-classGroup"
+                                >
+                                <BFormSelect
+                                        v-model="form.classeGroup"
+                                        :options="classeGroupOptions"
+                                        value-field="id"
+                                        text-field="title"
+                                    >
+                                        <template #first>
+                                            <option
+                                                :value="null"
+                                                disabled
+                                            >
+                                                Choisissez l'année d'étude
+                                            </option>
+                                        </template>
+                                </BFormSelect>
                                 </b-form-group>
                             </b-col>
                             <b-col>
@@ -36,6 +56,7 @@
                                         v-model="form.dateEnd"
                                     />
                                 </b-form-group>
+                                
                                 <b-form-group
                                     label="Numero de période"
                                     label-for="input-periodNum"
@@ -131,9 +152,11 @@ export default {
                 dateStart: "",
                 dateEnd: "",
                 scholarYear:"",
+                classeGroup:"",
             },
             noExist: null,
             scholaryearOptions:[],
+            classeGroupOptions:[],
         };
     },
     methods: {
@@ -172,6 +195,7 @@ export default {
                         this.form.dateStart = response.data.dateStart;
                         this.form.dateEnd = response.data.dateEnd;
                         this.form.scholarYear = response.data.scholarYear;
+                        this.form.classeGroup = response.data.classeGroup;
                     }
                 });
         },
@@ -190,8 +214,14 @@ export default {
                         console.log(myMap);
                     }});
         },
-        delete: function(){
-            //
+        loadClasseGroupOptions(){
+            axios.get("api/classegroup/",token)
+                .then(response => {
+                    if(response.data){
+                        this.classeGroupOptions = response.data.results;
+                        console.log(this.classeGroupOptions)
+                    }
+                })
         },
         checkPeriodeAndScholaryear: function(){
             var scholarYearSelected = this.scholaryearOptions.find((scholarYear) => scholarYear.id === this.form.scholarYear);
@@ -211,6 +241,7 @@ export default {
     mounted: function () {
         if(this.id != "0") this.loadItem();
         this.loadScholaryearOptions();
+        this.loadClasseGroupOptions();
     }
 };
 </script>

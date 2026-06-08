@@ -1,25 +1,25 @@
 <template>
-<h1>Classes par année d'étude</h1>
-    <div>
-    <!-- <BTable
-      striped
-      hover
-      :items="this.entries"
-      :fields="this.fields"
-    /> -->
-    </div>
-    <b-row
-    class="card px-4 mt-2" 
-    v-for="classeGroup in entries"
-    >
+    <BContainer>
+
+        <h1>Classes</h1>
+
+        <b-row
+        class="card px-4 mt-2" style="background-image:linear-gradient(135deg,#C5CBE5,#eaf3fc);"
+        v-for="classeGroup in entries"
+        >
         <div>
-			
-            <h4>{{ classeGroup.studyYear }} ({{ classeGroup.title }}) :</h4>
+            <h3 style="position: relative;
+                left: -30px;
+                color: grey;
+                font-weight: bolder;">{{ classeGroup.studyYear }}e - {{ classeGroup.title }}:</h3>
             <ClassePad
             v-for="classe in classeGroup.classes"
-            :label="classe"/>
+            :label="classe.classe+classe.letter" 
+            :id="classe.id"
+            />
         </div>
-    </b-row>
+        </b-row>
+    </BContainer>
 </template>
 
 <script>
@@ -38,23 +38,22 @@ export default{
         return {
             entries : [],
             fields : [
-                {key: 'title', label:'Titre'},
-                {key: 'studyYear', label:'Année d\'étude'},
+            {key: 'title', label:'Titre'},
+            {key: 'studyYear', label:'Année d\'étude'},
             ]
         }
     },
     methods:{
         loadEntries:function(){
             return axios.get("api/classegroup/").then(
-                response => {
-                    this.entries = response.data.results;
-                }
+            response => {
+                this.entries = response.data.results;
+            }
             )
         }
     },
     mounted:function() {
         this.loadEntries();
-
     }
 }
 

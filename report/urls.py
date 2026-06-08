@@ -34,5 +34,6 @@ router.register(r"api/scholaryear_exist",views.ScholaryearValidation)
 router.register(r"api/period",views.Period)
 router.register(r"api/classegroup",views.ClasseGroup)
 router.register(r"api/classe",views.Classe)
+router.register(r"api/studentlevel",views.StudentLevel)
 
 urlpatterns += router.urls

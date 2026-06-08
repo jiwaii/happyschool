@@ -3,8 +3,9 @@
         <!-- <app-menu
             :menu-info="menuInfo"
         /> -->
-        
-        <router-view v-slot="{ Component }">
+        <BBreadcrumb :items="menuBread"/>
+
+        <router-view v-slot="{ Component}">
             <Transition name="fade">
                 <component :is="Component" />
             </Transition>
@@ -29,6 +30,7 @@ export default {
     mounted: function() {
         // eslint-disable-next-line no-undef
         this.menuInfo = menu;
+        this.menuBread = "Menu Principale";
     },
     components: {
         "app-menu": Menu,

@@ -1,8 +1,8 @@
 <template>
     
-        <div style="position: fixed; right: 50px;left: 50px;">
+        <!-- <div style="position: fixed; right: 50px;left: 50px;">
             <b-img src="/static/report/img/logo_isln_bleu_Only.png" placement="center" fluid alt=""/>
-        </div>
+        </div> -->
 
 
         <!-- <span>Message : {{ test }} </span> -->
@@ -50,7 +50,7 @@
                 <b-col>
                     <div>
                         <router-link
-                            to="/"
+                            to="/students_levels/"
                             style="text-decoration: none;"
                         >
                             <b-card
