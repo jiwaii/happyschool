@@ -28,9 +28,36 @@ class ScholaryearSerializer(serializers.ModelSerializer):
         fields = ['id','label','dateStart','dateEnd']
         
 class PeriodSerializer(serializers.ModelSerializer):
-       class Meta:
+    class Meta:
         model = Period
         fields = ['id','periodNum','dateStart','dateEnd','scholarYear','classeGroup','classeGroupLabel']
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=['scholarYear', 'classeGroup','periodNum'],
+                message="Periode déjà existante !"
+            )
+        ]
+    def validate(self,attrs):
+        # overlaped = False
+        data = self.initial_data
+        print(f"SELF: {data}")
+        print(f"current insert p-{data['periodNum']}: {data['dateStart']} => {data['dateEnd']}")
+        num_of_periods = Period.objects.filter(classeGroup=data['classeGroup'],scholarYear=data['scholarYear']).count()
+        period_exist = False if num_of_periods == 0 else True
+        existingPeriods = Period.objects.filter(classeGroup=data['classeGroup'],scholarYear=data['scholarYear']).order_by('dateStart')
+       
+        ## Test Overlaping when have periods
+        if (period_exist):
+            for p in existingPeriods:
+                print(f"p-{p.periodNum}: {p.dateStart} => {p.dateEnd} WITH new : {data['dateStart']} => {data['dateEnd']}")
+                if (data['dateStart'] >= str(p.dateStart) and data['dateStart'] <= str(p.dateEnd)) or (data['dateEnd'] <= str(p.dateEnd) and data['dateEnd'] >= str(p.dateStart)):
+                    # overlaped = True
+                    print("overlaps !")
+                    raise serializers.ValidationError("ATTETION: Un enchevauchement avec les dates de périodes a été detecté !")
+                    # break 
+            
+        return attrs
         
 class ClasseSerializer(serializers.ModelSerializer):
     class Meta:

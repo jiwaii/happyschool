@@ -164,7 +164,6 @@ export default {
             return Moment(date).calendar();
         },
         submit: function () {
-            console.log("submit period :");
             if(this.checkPeriodeAndScholaryear()){            
                 if(this.id != "0"){
                     axios.put(`api/period/${this.id}/`,this.form,token).then(
@@ -176,8 +175,22 @@ export default {
                         });
                 
                 }else{
-                    axios.post("api/period/",this.form,token);
-                    this.$router.push("/periods/");
+                    console.log("post");
+                    axios.post("api/period/",this.form,token).then((response) => {
+                            console.log("response " + response);
+                        })
+                        .catch((error) => {
+                            // console.error("error GRR "+error);
+                            console.log(error.response.data);
+                            alert(error.response.data.non_field_errors)
+                            // console.log(error.response.status);
+                            // console.log(error.response.headers);
+                            // console.log(error.message)
+                        })
+                        .finally(() => {
+                            console.log("Request completed");
+                        });
+                    // this.$router.push("/periods/");
                 }
             }
         },
@@ -227,10 +240,10 @@ export default {
             var scholarYearSelected = this.scholaryearOptions.find((scholarYear) => scholarYear.id === this.form.scholarYear);
             console.log(scholarYearSelected.dateEnd);
             if (this.form.dateStart < scholarYearSelected.dateStart){
-                alert("Date de DÉBUT de période ("+this.form.dateStart+") est inférieur à la date d'entrés scolaire "+scholarYearSelected.dateStart);
+                alert("Date de DÉBUT de période ("+this.form.dateStart+") est inférieur à la date de la rentrés scolaire "+scholarYearSelected.dateStart);
                 return false;
             } else if(this.form.dateEnd > scholarYearSelected.dateEnd){
-                alert("Date de FIN de période ("+this.form.dateEnd+") est supérieur à la date de sortie scolaire "+scholarYearSelected.dateEnd);
+                alert("Date de FIN de période ("+this.form.dateEnd+") est supérieur à la date de la sortie scolaire "+scholarYearSelected.dateEnd);
                 return false;
             } else{
                 return true;

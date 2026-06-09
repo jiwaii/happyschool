@@ -55,33 +55,33 @@ class Period(models.Model):
             models.UniqueConstraint(
                 name="unique_period",
                 fields=["periodNum","classeGroup","scholarYear"],
-                violation_error_message="cette periode existe déjà"),
+                violation_error_message="Cette periode existe déjà"),
         ]
     
-    def save(self,*args, **kwargs):
-        overlaped = False
-        num_of_periods = Period.objects.filter(classeGroup=self.classeGroup,scholarYear=self.scholarYear).count()
-        period_exist = False if num_of_periods == 0 else True
-        existingPeriods = Period.objects.filter(classeGroup=self.classeGroup,scholarYear=self.scholarYear).order_by('dateStart')
+    # def save(self,*args, **kwargs):
+    #     overlaped = False
+    #     num_of_periods = Period.objects.filter(classeGroup=self.classeGroup,scholarYear=self.scholarYear).count()
+    #     period_exist = False if num_of_periods == 0 else True
+    #     existingPeriods = Period.objects.filter(classeGroup=self.classeGroup,scholarYear=self.scholarYear).order_by('dateStart')
        
-        ## Test Overlaping when have periods
-        if (period_exist):
-            for p in existingPeriods:
-                print(f'p-{p.periodNum}: {p.dateStart} => {p.dateEnd}')
-                if (self.dateStart >= p.dateStart and self.dateStart <= p.dateEnd) or (self.dateEnd <= p.dateEnd and self.dateEnd >= p.dateStart):
-                    overlaped = True
-                    print("overlalps !")
-                    break    
-            print(f'current insert p-{self.periodNum}: {self.dateStart} => {self.dateEnd}')
+    #     ## Test Overlaping when have periods
+    #     if (period_exist):
+    #         for p in existingPeriods:
+    #             print(f'p-{p.periodNum}: {p.dateStart} => {p.dateEnd}')
+    #             if (self.dateStart >= p.dateStart and self.dateStart <= p.dateEnd) or (self.dateEnd <= p.dateEnd and self.dateEnd >= p.dateStart):
+    #                 overlaped = True
+    #                 print("overlaps !")
+    #                 break    
+    #         print(f'current insert p-{self.periodNum}: {self.dateStart} => {self.dateEnd}')
             
-        else:
-            print('No periods again')
+    #     else:
+    #         print('No periods again')
             
-        if (overlaped):
-            print('400: add or update period error: overlaps dates')
-            return
-        else:
-            return super().save(*args, **kwargs)
+    #     if (overlaped):
+    #         print('400: add or update period error: overlaps dates')
+    #         return
+    #     else:
+    #         return super().save(*args, **kwargs)
 
 class Course(models.Model):
     title = models.CharField(max_length=100)
