@@ -29,7 +29,6 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
     routes: [
-
         {
             path: "/",
             component: ReportMenu,
@@ -60,7 +59,7 @@ const router = createRouter({
             component: Report_PeriodForm,
             props:true
         },
-        {  
+        {
             path:"/period_edit/:id",
             component: Report_PeriodForm,
             props:true
@@ -74,7 +73,7 @@ const router = createRouter({
             path:"/students_levels/",
             component: Report_StudentLevel,
             props:true
-        }
+        },
     ],
     history: createWebHashHistory(),
 });

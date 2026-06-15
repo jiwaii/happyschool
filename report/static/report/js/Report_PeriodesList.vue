@@ -5,7 +5,7 @@
         solid
     >
         <template #title> Mon Toast</template>
-        {{ scholarYears[scholarYearsSelected]}} As tu vu mon toast ? 
+        {{ scholarYears[scholarYearsSelected]}} As tu vu mon toast ?
     </BToast> -->
     <div style="margin: 50px;">
         <div>
@@ -25,7 +25,7 @@
                         Ajouter +
                     </b-button>
                 </BCol>
-               
+
                 <BCol cols="3">
                     <BFormSelect
                         v-model="scholarYearsSelected"
@@ -66,11 +66,11 @@
             >
                 <b-col>
                     <h5>
-                        Période 
+                        Période
                         <BBadge>
                             {{ period.periodNum }}
-                        </BBadge> 
-                        ({{ scholarYears[period.scholarYear] }}) {{ period.classeGroupLabel }}  
+                        </BBadge>
+                        ({{ scholarYears[period.scholarYear] }}) {{ period.classeGroupLabel }}
                         <!-- {{ classeGroups[period.classeGroup] }}                       -->
                         <!-- ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }}) -->
                     </h5>
@@ -102,39 +102,33 @@
             </b-row>
         </div>
     </div>
-    
-        
 </template>
 <script>
 
 import axios from "axios";
-//import { BCol } from "bootstrap-vue-next";
-// import { BLink } from "bootstrap-vue-next";
-import Moment from "moment";
-import "moment/dist/locale/fr";
-import {ref} from "vue";
-Moment.locale("fr");
-export default{
-    data: function(){
+import { DateTime } from "luxon";
+
+export default {
+    data: function () {
         return {
-            periodEntries : [],
+            periodEntries: [],
             periodEntriesCount: 0,
-            scholarYears : [],
-            scholarYearsOptions : [],
+            scholarYears: [],
+            scholarYearsOptions: [],
             scholarYearsSelected: "",
             classeGroups: [],
-            keyword : "",
-            search : () => {
+            keyword: "",
+            search: () => {
                 console.log(this.keyword);
                 this.findEntries();
             },
             // showToast : false,
         };
     },
-    methods:{
-        loadEntries: function(){
+    methods: {
+        loadEntries: function () {
             return axios.get("api/period/")
-                .then(response =>{
+                .then((response) => {
                     this.periodEntries = response.data.results;
                     this.periodEntriesCount = response.data.count;
                     this.loaded = true;
@@ -142,17 +136,17 @@ export default{
                     console.log(this.periodEntries);
                 });
         },
-        loadScolaryears: function(){
+        loadScolaryears: function () {
             return axios.get("api/scholaryear_exist")
-                .then(response =>{
+                .then((response) => {
                     this.scholarYearsOptions = response.data.results;
-                    response.data.results.map(item => {
+                    response.data.results.map((item) => {
                         this.scholarYears[item.id] = item.label;
-                        //item[item.id] = item.label;
-                        //item.value = item.label;
+                        // item[item.id] = item.label;
+                        // item.value = item.label;
                         // delete item.id;
-                        
-                        item.name = item.label; 
+
+                        item.name = item.label;
                         delete item.label;
                         delete item.dateEnd;
                         delete item.dateStart;
@@ -161,38 +155,36 @@ export default{
                     console.log(this.scholarYearsOptions);
                 });
         },
-        loadClasseGroups: function(){
+        loadClasseGroups: function () {
             return axios.get("api/classegroup")
-                .then(response => {
+                .then((response) => {
                     // this.classeGroup = response.data.results;
-                    response.data.results.map(item => {
-                        this.classeGroups[item.id] = item.title
-                    })
-                    console.log(this.classeGroups)
-                })
+                    response.data.results.map((item) => {
+                        this.classeGroups[item.id] = item.title;
+                    });
+                    console.log(this.classeGroups);
+                });
         },
-        findEntries: function(){
+        findEntries: function () {
             // this.showToast = true;
             return axios.get(`api/period/?periodNum=${this.keyword}&scholarYear__id=${this.scholarYearsSelected}`)
-                .then(response =>{
+                .then((response) => {
                     this.periodEntries = response.data.results;
                     this.periodEntriesCount = response.data.count;
                     this.loaded = true;
                     console.log("periods :");
                     console.log(this.periodEntries);
                 });
-                
         },
-        convertDateFr: function(date){
-            return Moment(date).calendar();
-        }
+        convertDateFr: function (date) {
+            // return Moment(date).calendar();
+            return DateTime.fromISO(date).toLocaleString();
+        },
     },
-    mounted:function(){
+    mounted: function () {
         // this.loadEntries();
         this.loadScolaryears();
         this.loadClasseGroups();
-        
-        
-    }
+    },
 };
 </script>

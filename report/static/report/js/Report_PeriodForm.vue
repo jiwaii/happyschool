@@ -27,7 +27,7 @@
                                     label="Année d'étude"
                                     label-for="input-classGroup"
                                 >
-                                <BFormSelect
+                                    <BFormSelect
                                         v-model="form.classeGroup"
                                         :options="classeGroupOptions"
                                         value-field="id"
@@ -41,7 +41,7 @@
                                                 Choisissez l'année d'étude
                                             </option>
                                         </template>
-                                </BFormSelect>
+                                    </BFormSelect>
                                 </b-form-group>
                             </b-col>
                             <b-col>
@@ -128,22 +128,17 @@
 
 <script>
 
-
-// import { options } from "@fullcalendar/core/preact.js";
 import axios from "axios";
-// import { BRow } from "bootstrap-vue-next";
-import Moment from "moment";
-import "moment/dist/locale/fr";
-Moment.locale("fr");
+import { DateTime } from "luxon";
 
 const token = { xsrfCookieName: "csrftoken", xsrfHeaderName: "X-CSRFToken" };
 
 export default {
-    props:{
-        id:{
+    props: {
+        id: {
             type: String,
             default: "0",
-        }
+        },
     },
     data: function () {
         return {
@@ -151,17 +146,18 @@ export default {
                 periodNum: "",
                 dateStart: "",
                 dateEnd: "",
-                scholarYear:"",
-                classeGroup:"",
+                scholarYear: "",
+                classeGroup: "",
             },
             noExist: null,
-            scholaryearOptions:[],
-            classeGroupOptions:[],
+            scholaryearOptions: [],
+            classeGroupOptions: [],
         };
     },
     methods: {
         convertDateFr: function (date) {
-            return Moment(date).calendar();
+            // return Moment(date).calendar();
+            return DateTime.fromISO(date).toLocaleString();
         },
         submit: function () {
             if(this.checkPeriodeAndScholaryear()){
@@ -170,19 +166,19 @@ export default {
                         () => {
                             this.$router.push("/periods/");
                         }).catch(
-                        (error) =>{
+                        (error) => {
                             console.log(error);
                         });
 
                 }else{
                     console.log("post");
-                    axios.post("api/period/",this.form,token).then((response) => {
-                            console.log("response " + response);
-                        })
+                    axios.post("api/period/", this.form, token).then((response) => {
+                        console.log("response " + response);
+                    })
                         .catch((error) => {
                             // console.error("error GRR "+error);
                             console.log(error.response.data);
-                            alert(error.response.data.non_field_errors)
+                            alert(error.response.data.non_field_errors);
                             // console.log(error.response.status);
                             // console.log(error.response.headers);
                             // console.log(error.message)
@@ -194,9 +190,9 @@ export default {
                 }
             }
         },
-        deleteItem : function(){
-            console.log("delete id : "+this.id);
-            axios.delete(`api/period/${this.id}/`,token);
+        deleteItem: function () {
+            console.log("delete id : " + this.id);
+            axios.delete(`api/period/${this.id}/`, token);
             this.$router.push("/periods/");
         },
 
@@ -212,49 +208,50 @@ export default {
                     }
                 });
         },
-        loadScholaryearOptions(){
-            axios.get("api/scholaryear_exist/",token)
-                .then(response =>{
-                    if(response.data){
+        loadScholaryearOptions() {
+            axios.get("api/scholaryear_exist/", token)
+                .then((response) => {
+                    if (response.data) {
                         this.scholaryearOptions = response.data.results;
                         console.log(this.scholaryearOptions);
 
-                        let myMap = this.scholaryearOptions.map(item => {
+                        let myMap = this.scholaryearOptions.map((item) => {
                             item.labelYear = item.label;
                             delete item.label;
                             return item;
                         });
                         console.log(myMap);
-                    }});
-        },
-        loadClasseGroupOptions(){
-            axios.get("api/classegroup/",token)
-                .then(response => {
-                    if(response.data){
-                        this.classeGroupOptions = response.data.results;
-                        console.log(this.classeGroupOptions)
                     }
-                })
+                });
         },
-        checkPeriodeAndScholaryear: function(){
-            var scholarYearSelected = this.scholaryearOptions.find((scholarYear) => scholarYear.id === this.form.scholarYear);
+        loadClasseGroupOptions() {
+            axios.get("api/classegroup/", token)
+                .then((response) => {
+                    if (response.data) {
+                        this.classeGroupOptions = response.data.results;
+                        console.log(this.classeGroupOptions);
+                    }
+                });
+        },
+        checkPeriodeAndScholaryear: function () {
+            var scholarYearSelected = this.scholaryearOptions.find(scholarYear => scholarYear.id === this.form.scholarYear);
             console.log(scholarYearSelected.dateEnd);
-            if (this.form.dateStart < scholarYearSelected.dateStart){
-                alert("Date de DÉBUT de période ("+this.form.dateStart+") est inférieur à la date de la rentrés scolaire "+scholarYearSelected.dateStart);
+            if (this.form.dateStart < scholarYearSelected.dateStart) {
+                alert("Date de DÉBUT de période (" + this.form.dateStart + ") est inférieur à la date de la rentrés scolaire " + scholarYearSelected.dateStart);
                 return false;
-            } else if(this.form.dateEnd > scholarYearSelected.dateEnd){
-                alert("Date de FIN de période ("+this.form.dateEnd+") est supérieur à la date de la sortie scolaire "+scholarYearSelected.dateEnd);
+            } else if (this.form.dateEnd > scholarYearSelected.dateEnd) {
+                alert("Date de FIN de période (" + this.form.dateEnd + ") est supérieur à la date de la sortie scolaire " + scholarYearSelected.dateEnd);
                 return false;
-            } else{
+            } else {
                 return true;
             }
             // VOIR ENCHEVAUCHEMENT ENTRE PERIODE AUSSI
         },
     },
     mounted: function () {
-        if(this.id != "0") this.loadItem();
+        if (this.id != "0") this.loadItem();
         this.loadScholaryearOptions();
         this.loadClasseGroupOptions();
-    }
+    },
 };
 </script>

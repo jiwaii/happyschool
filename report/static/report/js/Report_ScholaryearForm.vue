@@ -2,7 +2,7 @@
     <div style="margin: 50px;">
         <div>
             <b-row>
-                <h2>Bulletin: {{(this.id > 0) ? "Editer" : "Nouvelle" }} années scolaires</h2>
+                <h2>Bulletin: {{ (this.id > 0) ? "Editer" : "Nouvelle" }} années scolaires</h2>
             </b-row>
             <b-row>
                 <b-form
@@ -86,21 +86,17 @@
 
 <script>
 
-
 import axios from "axios";
-// import { BForm } from "bootstrap-vue-next";
-import Moment from "moment";
-import "moment/dist/locale/fr";
-Moment.locale("fr");
+import { DateTime } from "luxon";
 
 const token = { xsrfCookieName: "csrftoken", xsrfHeaderName: "X-CSRFToken" };
 
 export default {
-    props:{
-        id:{
+    props: {
+        id: {
             type: String,
             default: "0",
-        }
+        },
     },
     data: function () {
         return {
@@ -109,25 +105,24 @@ export default {
                 dateStart: "",
                 dateEnd: "",
             },
-            noExist: null
+            noExist: null,
 
         };
     },
     methods: {
         convertDateFr: function (date) {
-            return Moment(date).calendar();
+            // return Moment(date).calendar();
+            return DateTime.fromISO(date).toLocaleString();
         },
         submit: function () {
-            console.log("Title : " + this.form.label +
-                " \n Start : " + this.form.dateStart +
-                " \n End : " + this.form.dateEnd);
+            console.log("Title : " + this.form.label
+              + " \n Start : " + this.form.dateStart
+              + " \n End : " + this.form.dateEnd);
 
-            console.log("is Date ? : " + Moment.isDate(this.form.dateEnd));
-            const token = { xsrfCookieName: "csrftoken", xsrfHeaderName: "X-CSRFToken" };
-            if(this.id != "0"){
-                axios.put(`api/scholaryear_exist/${this.id}/`,this.form,token);
+            if (this.id != "0") {
+                axios.put(`api/scholaryear_exist/${this.id}/`, this.form, token);
                 this.$router.push("/scholaryears/");
-            }else{
+            } else {
                 axios.get("api/scholaryear_exist/?label=" + this.form.label,
                     this.form, token)
                     .then((response) => {
@@ -150,34 +145,32 @@ export default {
                         console.log(error);
                     });
             }
-
         },
-        deleteItem : function(){
-            console.log("delete id : "+this.id);
-            axios.delete(`scholaryear/${this.id}/`,token);
+        deleteItem: function () {
+            console.log("delete id : " + this.id);
+            axios.delete(`scholaryear/${this.id}/`, token);
             this.$router.push("/scholaryears/");
         },
         genDateEnd: function (dateString) {
             let nextDate = new Date(dateString);
-            nextDate.setDate(nextDate.getDate()+364);
-            console.log("next date: "+nextDate);
+            nextDate.setDate(nextDate.getDate() + 364);
+            console.log("next date: " + nextDate);
             return nextDate.toLocaleDateString("en-ca");
-        }
-        ,
+        },
         genLabelStart: function (event) {
-            console.log("Selected : "+event);
+            console.log("Selected : " + event);
             if (this.form.label.indexOf("-") == 4) {
                 let endYear = this.form.label.substring(5, 9);
                 let startYear = event.split("-")[0];
                 this.form.label = startYear + "-" + endYear;
-                console.log("Title : "+this.form.label);
+                console.log("Title : " + this.form.label);
             } else {
                 this.form.label = event.split("-")[0];
-                this.form.dateEnd = this.genDateEnd(event);                
+                this.form.dateEnd = this.genDateEnd(event);
                 this.form.label += "-" + this.form.dateEnd.split("-")[0];
             }
-            
-            console.log("dateEnd: "+this.form.dateEnd);
+
+            console.log("dateEnd: " + this.form.dateEnd);
         },
         genLabelEnd: function (event) {
             if (this.form.label.indexOf("-") == 4) {
@@ -188,24 +181,24 @@ export default {
                 this.form.label += "-" + event.split("-")[0];
             }
             console.log(event);
-            console.log("dateEnd: "+this.form.dateEnd);
+            console.log("dateEnd: " + this.form.dateEnd);
         },
-        loadScholaryear(){
-            axios.get(`scholaryear/${this.id}/`,token)
-                .then(response =>{
-                    if(response.data){
+        loadScholaryear() {
+            axios.get(`scholaryear/${this.id}/`, token)
+                .then((response) => {
+                    if (response.data) {
                         this.form.label = response.data.label;
                         this.form.dateStart = response.data.dateStart;
                         this.form.dateEnd = response.data.dateEnd;
                     }
                 });
         },
-        delete: function(){
+        delete: function () {
             //
-        }
+        },
     },
     mounted: function () {
-        if(this.id != "0") this.loadScholaryear();
-    }
+        if (this.id != "0") this.loadScholaryear();
+    },
 };
 </script>

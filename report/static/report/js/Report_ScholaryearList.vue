@@ -19,7 +19,7 @@
                         </b-button>
                     </b-col>
                 </b-row>
-            
+
                 <b-row
                     class="card px-4 mt-2"
                     v-for="scholaryear in scholaryearEntries"
@@ -61,34 +61,32 @@
 <script>
 
 import axios from "axios";
-// import { BContainer, BLink } from "bootstrap-vue-next";
-import Moment from "moment";
-import "moment/dist/locale/fr";
-Moment.locale("fr");
+import { DateTime } from "luxon";
 
-export default{
-    data: function(){
+export default {
+    data: function () {
         return {
-            scholaryearEntries : [],
+            scholaryearEntries: [],
             scholaryearEntriesCount: 0,
         };
     },
-    methods:{
-        loadEntries: function(){
+    methods: {
+        loadEntries: function () {
             axios.get("/report/scholaryear/")
-                .then(response =>{
+                .then((response) => {
                     console.log(response);
                     this.scholaryearEntries = response.data;
                     this.scholaryearEntriesCount = response.data.lenght;
                     this.loaded = true;
                 });
         },
-        convertDateFr: function(date){
-            return Moment(date).calendar();
-        }
+        convertDateFr: function (date) {
+            // return Moment(date).calendar();
+            return DateTime.fromISO(date).toLocaleString();
+        },
     },
-    mounted:function(){
+    mounted: function () {
         this.loadEntries();
-    }
+    },
 };
 </script>
