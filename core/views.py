@@ -67,6 +67,9 @@ from core.models import (
     ParentSettingModel,
     ParentNotificationSettingsModel,
     ColumnToFieldImportModel,
+    ScholarYearModel,
+    ClasseGroupModel,
+    StudentLevelModel,
 )
 from core.people import get_classes
 from core.permissions import IsSecretaryPermission
@@ -88,6 +91,9 @@ from core.serializers import (
     GivenCourseSerializer,
     ParentSettingsNotificationSerializer,
     ColumnToFieldImportSerializer,
+    ScholarYearSerializer,
+    ClasseGroupSerializer,
+    StudentLevelSerializer,
 )
 from core.utilities import get_scholar_year, get_menu
 
@@ -821,3 +827,26 @@ class ColumnToFieldImportViewSet(ModelViewSet):
         IsAuthenticated,
         DjangoModelPermissions,
     )
+
+
+class ScholarYearViewSet(ModelViewSet):
+    queryset = ScholarYearModel.objects.all()
+    serializer_class = ScholarYearSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    permission_classes = [DjangoModelPermissions]
+    # filterset_fields = ["label"]
+
+
+class ClasseGroupViewSet(ModelViewSet):
+    queryset = ClasseGroupModel.objects.all()
+    serializer_class = ClasseGroupSerializer
+    permission_classes = [DjangoModelPermissions]
+    # filterset_fields = ['studyYear']
+
+
+class StudentLevelViewSet(ModelViewSet):
+    queryset = StudentLevelModel.objects.all()
+    serializer_class = StudentLevelSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = ["scholar_year", "classe__classe"]
+    permission_classes = [DjangoModelPermissions]

@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with HappySchool.  If not, see <http://www.gnu.org/licenses/>.
 
+from dataclasses import fields
+
 from rest_framework import serializers
 
 from django.contrib.auth.models import User, Group
@@ -42,6 +44,12 @@ class StudentRelativeContactSerializer(serializers.ModelSerializer):
             "contact",
         ]
         depth = 1
+
+
+class ScholarYearSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScholarYearModel
+        fields = "__all__"
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -253,6 +261,18 @@ class ClasseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClasseModel
+        fields = "__all__"
+
+
+class ClasseGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClasseGroupModel
+        fields = "__all__"
+
+
+class StudentLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentLevelModel
         fields = "__all__"
 
 

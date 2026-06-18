@@ -88,6 +88,15 @@ class CoreSettingsModel(models.Model):
     )
 
 
+class ScholarYearModel(models.Model):
+    label = models.CharField(max_length=9, unique=True)
+    date_start = models.DateField()
+    date_end = models.DateField()
+
+    def __str__(self):
+        return f"{self.label}"
+
+
 class TeachingModel(models.Model):
     display_name = models.CharField(max_length=100)
     name = models.CharField(max_length=100, help_text="Nom simple pour la programmation.")
@@ -96,10 +105,30 @@ class TeachingModel(models.Model):
         return "%s (%s)" % (self.display_name, self.name)
 
 
-class ClasseModel(models.Model):
-    year = models.IntegerField()
-    letter = models.CharField(max_length=20)
+class ClasseGroupModel(models.Model):
+    label = models.CharField(max_length=120)
     teaching = models.ForeignKey(TeachingModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.label} – {self.teaching.display_name}"
+
+
+class ClasseModel(models.Model):
+    year = models.PositiveSmallIntegerField()
+    letter = models.CharField(max_length=20)
+    form = models.CharField(max_length=50, blank=True)
+    channel = models.CharField(max_length=50, blank=True)
+    orientation = models.CharField(max_length=200, blank=True)
+
+    classe_group = models.ForeignKey(ClasseGroupModel, on_delete=models.PROTECT, null=True)
+    teaching = models.ForeignKey(TeachingModel, on_delete=models.CASCADE)  # Deprecated
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_classe", fields=["year", "letter", "classe_group", "teaching"]
+            )
+        ]
 
     def __str__(self):
         return str(self.year) + self.letter.upper() + " – " + str(self.teaching.display_name)
@@ -119,8 +148,31 @@ class CourseModel(models.Model):
 
 
 class GivenCourseModel(models.Model):
+    def get_current_scholar_year():
+        from .utilities import get_scholar_year
+
+        current_scholar_year = get_scholar_year()
+        try:
+            scholar_year = ScholarYearModel.objects.get(label__startswith=str(current_scholar_year))
+            return scholar_year.pk
+        except models.ObjectDoesNotExist:
+            core_settings = CoreSettingsModel.objects.all().first()
+            date_start = f"{current_scholar_year}-{core_settings.month_scholar_year_start}-{core_settings.day_scholar_year_start}"
+            date_end = f"{current_scholar_year + 1}-{core_settings.month_scholar_year_start}-{core_settings.day_scholar_year_start - 1}"
+            scholar_year = ScholarYearModel(
+                label=f"{current_scholar_year}-{current_scholar_year+1}",
+                date_start=date_start,
+                date_end=date_end,
+            )
+            scholar_year.save()
+            return scholar_year.pk
+
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE)
     group = models.CharField(max_length=100, default="", blank=True)
+    scholar_year = models.ForeignKey(
+        ScholarYearModel, on_delete=models.RESTRICT, default=get_current_scholar_year
+    )
+    hours_per_week = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         name = self.course.long_name if self.course.long_name else self.course.short_name
@@ -252,6 +304,32 @@ class StudentModel(models.Model):
     @property
     def display(self):
         return self.__str__()
+
+
+class StudentLevelModel(models.Model):
+    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
+    classe = models.ForeignKey(ClasseModel, on_delete=models.PROTECT)
+    scholar_year = models.ForeignKey(ScholarYearModel, on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_student_level", fields=["student", "classe", "scholar_year"]
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.student.first_name} {self.student.last_name} {self.classe} {self.scholar_year}"
+        )
+
+
+class StudentLevelCourseModel(models.Model):
+    student_level = models.ForeignKey(StudentLevelModel, on_delete=models.CASCADE)
+    course = models.ForeignKey(GivenCourseModel, on_delete=models.CASCADE)
+
+    date_start = models.DateField()
+    date_end = models.DateField()
 
 
 class AdditionalStudentInfo(models.Model):

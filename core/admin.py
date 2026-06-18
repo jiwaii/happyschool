@@ -39,6 +39,10 @@ from .models import (
     ContactModel,
     ParentSettingModel,
     ParentNotificationSettingsModel,
+    ScholarYearModel,
+    StudentLevelModel,
+    StudentLevelCourseModel,
+    ClasseGroupModel,
 )
 
 
@@ -147,3 +151,7 @@ admin.site.register(StudentRelativeModel)
 admin.site.register(ContactModel)
 admin.site.register(ParentSettingModel)
 admin.site.register(ParentNotificationSettingsModel)
+admin.site.register(ScholarYearModel)
+admin.site.register(StudentLevelModel)
+admin.site.register(StudentLevelCourseModel)
+admin.site.register(ClasseGroupModel)

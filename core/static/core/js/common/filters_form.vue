@@ -307,7 +307,7 @@ export default {
                     });
                 return;
             } else if (this.filterType == "scholar_year") {
-                axios.get("/core/api/scholar_year/?scholar_year=" + search)
+                axios.get("/core/api/scholar_year_label/?scholar_year=" + search)
                     .then((response) => {
                         if (this.searchId !== currentSearch)
                             return;

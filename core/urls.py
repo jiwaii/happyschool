@@ -29,7 +29,7 @@ app_name = "core"
 urlpatterns = [
     path("profil/", views.ProfilView.as_view(), name="profil"),
     path("members/", views.MembersView.as_view(), name="members"),
-    path("api/scholar_year/", views.ScholarYearAPI.as_view()),
+    path("api/scholar_year_label/", views.ScholarYearAPI.as_view()),
     path("admin/", admin_views.AdminView.as_view()),
     path(
         "parentsettings/<uuid:student_uuid>/",
@@ -67,5 +67,8 @@ router.register(r"api/given_course_info", views.GivenCourseInfoViewSet, "given-c
 router.register(r"api/course_schedule", views.CourseScheduleViewSet)
 router.register(r"api/period", views.PeriodCoreViewSet)
 router.register(r"api/column_to_field_import", views.ColumnToFieldImportViewSet)
+router.register(r"api/classe_group", views.ClasseGroupViewSet)
+router.register(r"api/student_level", views.StudentLevelViewSet)
+router.register(r"api/scholar_year", views.ScholarYearViewSet)
 
 urlpatterns += router.urls
