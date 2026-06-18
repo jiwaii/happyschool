@@ -6,11 +6,6 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import router from "./router/index.js";
 
 
-
-//import { createPinia } from "pinia";
-
-//const pinia = createPinia();
-
 import ReportPage from "./ReportPage.vue";
 
 const app = createApp(ReportPage);

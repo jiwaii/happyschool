@@ -1,83 +1,58 @@
 from rest_framework import serializers
-from report.models import *
-from core.models import StudentModel
+from report.models import PeriodModel
 
-# class ScholarYearSerializer(serializers.Serializer):
-#     id = serializers.IntegerField(read_only=True)
-#     label = serializers.CharField()
-#     dateStart = serializers.DateField()
-#     dateEnd = serializers.DateField()
 
-#     def create(self, validated_data):
-#         return ScholarYear.objects.create(**validated_data)
-
-#     def update(self, instance, validated_data):
-#         instance.label = validated_data.get('label',instance.label)
-#         instance.dateStart = validated_data.get('dateStart',instance.dateStart)
-#         instance.dateEnd = validated_data.get('dateEnd',instance.dateEnd)
-#         return instance
-
-class StudentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StudentModel
-        fields = ['first_name','last_name']
-
-class ScholaryearSerializer(serializers.ModelSerializer):    
-    class Meta:
-        model = ScholarYear
-        fields = ['id','label','dateStart','dateEnd']
-        
 class PeriodSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Period
-        fields = ['id','periodNum','dateStart','dateEnd','scholarYear','classeGroup','classeGroupLabel']
+        model = PeriodModel
+        fields = [
+            "id",
+            "period_num",
+            "date_start",
+            "date_end",
+            "scholar_year",
+            "classe_group",
+            # "classe_group_label",
+        ]
         validators = [
             serializers.UniqueTogetherValidator(
                 queryset=model.objects.all(),
-                fields=['scholarYear', 'classeGroup','periodNum'],
-                message="Periode déjà existante !"
+                fields=["scholar_year", "classe_group", "period_num"],
+                message="Periode déjà existante !",
             )
         ]
-    def validate(self,attrs):
+
+    def validate(self, attrs):
+        # TODO : if modifying object exclude it from queryset.
         # overlaped = False
         data = self.initial_data
         print(f"SELF: {data}")
-        print(f"current insert p-{data['periodNum']}: {data['dateStart']} => {data['dateEnd']}")
-        num_of_periods = Period.objects.filter(classeGroup=data['classeGroup'],scholarYear=data['scholarYear']).count()
+        print(f"current insert p-{data['period_num']}: {data['date_start']} => {data['date_end']}")
+        num_of_periods = PeriodModel.objects.filter(
+            classe_group=data["classe_group"], scholar_year=data["scholar_year"]
+        ).count()
         period_exist = False if num_of_periods == 0 else True
-        existingPeriods = Period.objects.filter(classeGroup=data['classeGroup'],scholarYear=data['scholarYear']).order_by('dateStart')
-       
+        existingPeriods = PeriodModel.objects.filter(
+            classe_group=data["classe_group"], scholar_year=data["scholar_year"]
+        ).order_by("date_start")
+
         ## Test Overlaping when have periods
-        if (period_exist):
+        if period_exist:
             for p in existingPeriods:
-                print(f"p-{p.periodNum}: {p.dateStart} => {p.dateEnd} WITH new : {data['dateStart']} => {data['dateEnd']}")
-                if (data['dateStart'] >= str(p.dateStart) and data['dateStart'] <= str(p.dateEnd)) or (data['dateEnd'] <= str(p.dateEnd) and data['dateEnd'] >= str(p.dateStart)):
+                print(
+                    f"p-{p.period_num}: {p.date_start} => {p.date_end} WITH new : {data['date_start']} => {data['date_end']}"
+                )
+                if (
+                    data["date_start"] >= str(p.date_start)
+                    and data["date_start"] <= str(p.date_end)
+                ) or (
+                    data["date_end"] <= str(p.date_end) and data["date_end"] >= str(p.date_start)
+                ):
                     # overlaped = True
                     print("overlaps !")
-                    raise serializers.ValidationError("ATTETION: Un enchevauchement avec les dates de périodes a été detecté !")
-                    # break 
-            
+                    raise serializers.ValidationError(
+                        "ATTETION: Un enchevauchement avec les dates de périodes a été detecté !"
+                    )
+                    # break
+
         return attrs
-        
-class ClasseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Classe
-        fields = "__all__"
-        
-class ClasseGroupSerializer(serializers.ModelSerializer):
-    # classes = serializers.StringRelatedField(many=True)
-    classes = ClasseSerializer(many=True,read_only=True)
-    
-    class Meta:
-        model = ClasseGroup
-        # fields = "__all__"
-        fields = ['id','studyYear','title','classes']
- 
-class StudentLevelSerializer(serializers.ModelSerializer):
-    student = StudentSerializer(read_only=True)
-    scholarYear = serializers.StringRelatedField()
-    classe = serializers.StringRelatedField()
-    
-    class Meta:
-        model = StudentLevel
-        fields = ['id','student','classe','scholarYear']

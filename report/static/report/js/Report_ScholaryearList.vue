@@ -2,38 +2,38 @@
     <BContainer>
         <div style="margin: 50px;">
             <div>
-                <b-row>
+                <BRow>
                     <h2>Bulletin: Années scolaires</h2>
-                </b-row>
+                </BRow>
 
-                <b-row>
-                    <b-col
+                <BRow>
+                    <BCol
                         cols="12"
                         sm="3"
                     >
-                        <b-button
+                        <BButton
                             variant="success"
                             to="/scholaryears_form/"
                         >
                             Ajouter +
-                        </b-button>
-                    </b-col>
-                </b-row>
+                        </BButton>
+                    </BCol>
+                </BRow>
 
-                <b-row
+                <BRow
                     class="card px-4 mt-2"
                     v-for="scholaryear in scholaryearEntries"
                     :key="scholaryear.id"
                 >
-                    <b-col>
+                    <BCol>
                         <h5>
                             {{ scholaryear.label }}
                         </h5>
-                    </b-col>
-                    <b-col>
+                    </BCol>
+                    <BCol>
                         {{ convertDateFr(scholaryear.dateStart) }} au {{ convertDateFr(scholaryear.dateEnd) }}
-                    </b-col>
-                    <b-col style="text-align: right;">
+                    </BCol>
+                    <BCol style="text-align: right;">
                         <div class="text-right">
                             <BLink
                                 variant="outline-primary"
@@ -52,8 +52,8 @@
                         icon="pencil-square"
                         variant="success"
                     /></a> -->
-                    </b-col>
-                </b-row>
+                    </BCol>
+                </BRow>
             </div>
         </div>
     </BContainer>

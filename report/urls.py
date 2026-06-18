@@ -25,15 +25,9 @@ from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
     path("", ReportMenuView.as_view()),
-    path('scholaryear/',views.scholarYear_list),
-    path('scholaryear/<int:pk>/',views.ScholarYearDetail.as_view()),
-    ]
+]
 
 router = DefaultRouter()
-router.register(r"api/scholaryear_exist",views.ScholaryearValidation)
-router.register(r"api/period",views.Period)
-router.register(r"api/classegroup",views.ClasseGroup)
-router.register(r"api/classe",views.Classe)
-router.register(r"api/studentlevel",views.StudentLevel)
+router.register(r"api/period", views.PeriodViewSet)
 
 urlpatterns += router.urls

@@ -2,23 +2,23 @@
     <BContainer>
         <div style="margin: 50px;">
             <div>
-                <b-row>
+                <BRow>
                     <h2>Etudiants</h2>
-                </b-row>
-                <b-row>
-                    <b-col
+                </BRow>
+                <BRow>
+                    <BCol
                         cols="12"
                         sm="3"
                     >
-                        <b-button
+                        <BButton
                             variant="success"
                             to="/"
                         >
                             Ajouter +
-                        </b-button>
-                    </b-col>
-                </b-row>
-                <b-row>
+                        </BButton>
+                    </BCol>
+                </BRow>
+                <BRow>
                     <BTable
                         striped
                         hover
@@ -29,7 +29,7 @@
                             {{ data.item.student.first_name }} {{ data.item.student.last_name }}
                         </template>
                     </BTable>
-                </b-row>
+                </BRow>
             </div>
         </div>
     </BContainer>

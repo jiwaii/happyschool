@@ -2,7 +2,7 @@
     <BContainer>
         <h1>Classes</h1>
 
-        <b-row
+        <BRow
             class="card px-4 mt-2"
             style="background-image:linear-gradient(135deg,#C5CBE5,#eaf3fc);"
             v-for="classeGroup in entries"
@@ -22,7 +22,7 @@
                     :id="classe.id"
                 />
             </div>
-        </b-row>
+        </BRow>
     </BContainer>
 </template>
 

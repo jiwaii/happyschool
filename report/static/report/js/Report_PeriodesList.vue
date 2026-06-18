@@ -1,29 +1,21 @@
 <template>
-    <!-- <BToast
-        v-model="showToast"
-        variant="info"
-        solid
-    >
-        <template #title> Mon Toast</template>
-        {{ scholarYears[scholarYearsSelected]}} As tu vu mon toast ?
-    </BToast> -->
     <div style="margin: 50px;">
         <div>
-            <b-row>
+            <BRow>
                 <h2>Bulletin: Périodes</h2>
-            </b-row>
+            </BRow>
 
             <BRow>
                 <BCol
                     cols="6"
                     sm="2"
                 >
-                    <b-button
+                    <BButton
                         variant="success"
                         to="/period_form/"
                     >
                         Ajouter +
-                    </b-button>
+                    </BButton>
                 </BCol>
 
                 <BCol cols="3">
@@ -31,7 +23,7 @@
                         v-model="scholarYearsSelected"
                         :options="scholarYearsOptions"
                         value-field="id"
-                        text-field="name"
+                        text-field="label"
                         size="lg"
                         class="mb-3"
                         @change="search"
@@ -59,37 +51,42 @@
                     />
                 </BCol>
             </BRow>
-            <b-row
-                class="card px-4 mt-2"
-                v-for="period in periodEntries"
-                :key="period.id"
+            <BRow
+                v-if="scholarYearsOptions.length > 0 && classeGroups.length > 0"
             >
-                <b-col>
-                    <h5>
-                        Période
-                        <BBadge>
-                            {{ period.periodNum }}
-                        </BBadge>
-                        ({{ scholarYears[period.scholarYear] }}) {{ period.classeGroupLabel }}
+                <BCard
+                    class="px-4 mt-2"
+                    v-for="period in periodEntries"
+                    :key="period.id"
+                    no-body
+                >
+                    <BCol>
+                        <h5>
+                            Période
+                            <BBadge>
+                                {{ period.period_num }}
+                            </BBadge>
+                            ({{ scholarYearsOptions.find(sYO => sYO.id === period.scholar_year).label }})
+                            {{ classeGroups.find(cG => cG.id === period.classe_group).label }}
                         <!-- {{ classeGroups[period.classeGroup] }}                       -->
                         <!-- ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }}) -->
-                    </h5>
-                </b-col>
-                <b-col>
-                    {{ convertDateFr(period.dateStart) }} au {{ convertDateFr(period.dateEnd) }}
-                </b-col>
+                        </h5>
+                    </BCol>
+                    <BCol>
+                        {{ convertDateFr(period.date_start) }} au {{ convertDateFr(period.date_end) }}
+                    </BCol>
 
-                <b-col style="text-align: right;">
-                    <div class="text-right">
-                        <b-link
-                            variant="outline-primary"
-                            size="sm"
-                            :to="'/period_edit/' + period.id + '/'"
-                            class="card-link"
-                        >
-                            Modifier
-                        </b-link>
-                    </div>
+                    <BCol style="text-align: right;">
+                        <div class="text-right">
+                            <BLink
+                                variant="outline-primary"
+                                size="sm"
+                                :to="'/period_edit/' + period.id + '/'"
+                                class="card-link"
+                            >
+                                Modifier
+                            </BLink>
+                        </div>
                     <!-- <a
                         :href="`#/`"
                         @click="editScholaryear"
@@ -98,8 +95,9 @@
                         icon="pencil-square"
                         variant="success"
                     /></a> -->
-                </b-col>
-            </b-row>
+                    </BCol>
+                </BCard>
+            </BRow>
         </div>
     </div>
 </template>
@@ -127,7 +125,7 @@ export default {
     },
     methods: {
         loadEntries: function () {
-            return axios.get("api/period/")
+            return axios.get("/report/api/period/")
                 .then((response) => {
                     this.periodEntries = response.data.results;
                     this.periodEntriesCount = response.data.count;
@@ -137,52 +135,34 @@ export default {
                 });
         },
         loadScolaryears: function () {
-            return axios.get("api/scholaryear_exist")
+            return axios.get("/core/api/scholar_year/")
                 .then((response) => {
                     this.scholarYearsOptions = response.data.results;
-                    response.data.results.map((item) => {
-                        this.scholarYears[item.id] = item.label;
-                        // item[item.id] = item.label;
-                        // item.value = item.label;
-                        // delete item.id;
-
-                        item.name = item.label;
-                        delete item.label;
-                        delete item.dateEnd;
-                        delete item.dateStart;
-                    });
-                    console.log(this.scholarYears);
-                    console.log(this.scholarYearsOptions);
                 });
         },
         loadClasseGroups: function () {
-            return axios.get("api/classegroup")
+            return axios.get("/core/api/classe_group/")
                 .then((response) => {
-                    // this.classeGroup = response.data.results;
-                    response.data.results.map((item) => {
-                        this.classeGroups[item.id] = item.title;
-                    });
-                    console.log(this.classeGroups);
+                    this.classeGroups = response.data.results;
                 });
         },
         findEntries: function () {
-            // this.showToast = true;
-            return axios.get(`api/period/?periodNum=${this.keyword}&scholarYear__id=${this.scholarYearsSelected}`)
+            return axios.get(`/report/api/period/?periodNum=${this.keyword}&scholarYear__id=${this.scholarYearsSelected}`)
                 .then((response) => {
                     this.periodEntries = response.data.results;
                     this.periodEntriesCount = response.data.count;
                     this.loaded = true;
-                    console.log("periods :");
-                    console.log(this.periodEntries);
                 });
         },
         convertDateFr: function (date) {
             // return Moment(date).calendar();
+
             return DateTime.fromISO(date).toLocaleString();
         },
     },
     mounted: function () {
-        // this.loadEntries();
+        // TODO Make a global promise in order to assign data variables in the correct order and simultanuesly.
+        this.loadEntries();
         this.loadScolaryears();
         this.loadClasseGroups();
     },

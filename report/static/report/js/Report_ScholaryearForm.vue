@@ -1,17 +1,17 @@
 <template>
     <div style="margin: 50px;">
         <div>
-            <b-row>
+            <BRow>
                 <h2>Bulletin: {{ (this.id > 0) ? "Editer" : "Nouvelle" }} années scolaires</h2>
-            </b-row>
-            <b-row>
+            </BRow>
+            <BRow>
                 <b-form
                     @submit="submit"
                     @reset="reset"
                 >
-                    <b-card style="width: 700px;">
-                        <b-row>
-                            <b-col>
+                    <BCard style="width: 700px;">
+                        <BRow>
+                            <BCol>
                                 <b-form-group
                                     label="Commence le"
                                     label-for="input-dateStart"
@@ -23,8 +23,8 @@
                                         v-model="form.dateStart"
                                     />
                                 </b-form-group>
-                            </b-col>
-                            <b-col>
+                            </BCol>
+                            <BCol>
                                 <b-form-group
                                     label="Termine le"
                                     label-for="input-dateEnd"
@@ -52,34 +52,34 @@
                                         Existe déjà !
                                     </b-form-invalid-feedback>
                                 </b-form-group>
-                            </b-col>
-                        </b-row>
-                        <b-container class="bv-example-row">
-                            <b-row>
-                                <b-col>
-                                    <b-button
+                            </BCol>
+                        </BRow>
+                        <BContainer class="bv-example-row">
+                            <BRow>
+                                <BCol>
+                                    <BButton
                                         @click="submit"
                                         variant="primary"
                                         :disabled="sending"
                                     >
                                         {{ (this.id > 0) ? "Mettre à jour":"Soumettre" }}
-                                    </b-button>
-                                </b-col>
-                                <b-col style="text-align:right ;">
-                                    <b-button
+                                    </BButton>
+                                </BCol>
+                                <BCol style="text-align:right ;">
+                                    <BButton
                                         @click="deleteItem"
                                         v-if="this.id > 0"
                                         variant="danger"
                                         :disabled="sending"
                                     >
                                         Supprimer
-                                    </b-button>
-                                </b-col>
-                            </b-row>
-                        </b-container>
-                    </b-card>
+                                    </BButton>
+                                </BCol>
+                            </BRow>
+                        </BContainer>
+                    </BCard>
                 </b-form>
-            </b-row>
+            </BRow>
         </div>
     </div>
 </template>
