@@ -12,6 +12,7 @@ from core.templatetags import scholar_year
 # Create your models here.
 
 
+
 # class ClasseGroup(models.Model):
 #     studyYear = models.PositiveSmallIntegerField(null=False, blank=False)
 #     title = models.CharField(null=False, blank=False)
