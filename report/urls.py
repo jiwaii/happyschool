@@ -29,5 +29,8 @@ urlpatterns = [
 
 router = DefaultRouter()
 router.register(r"api/period", views.PeriodViewSet)
+router.register(r"api/cotation", views.CotationViewSet)
+router.register(r"api/note", views.NoteViewSet)
+
 
 urlpatterns += router.urls

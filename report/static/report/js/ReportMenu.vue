@@ -9,7 +9,7 @@
             <BCol>
                 <div>
                     <router-link
-                        to="/"
+                        to="/givencourse/"
                         style="text-decoration: none;"
                     >
                         <BCard

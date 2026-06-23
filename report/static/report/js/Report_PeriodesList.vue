@@ -7,7 +7,7 @@
 
             <BRow>
                 <BCol
-                    cols="6"
+                    cols="2"
                     sm="2"
                 >
                     <BButton
@@ -38,21 +38,30 @@
                         </template>
                     </BFormSelect>
                 </BCol>
-                <BCol cols="2">
-                    <b-form-input
-                        placeholder="Période"
-                        @change="this.search"
-                        id="input-scholarYearlabel"
-                        type="number"
+                
+                <BCol cols="5">
+                    <BFormSelect
+                        v-model="classeGroupsSelected"
+                        :options="classeGroupsOptions"
+                        value-field="id"
+                        text-field="label"
                         size="lg"
-                        v-model="keyword"
-                        min="1"
-                        max="9"
-                    />
+                        class="mb-3"
+                        @change="search"
+                    >
+                        <template #first>
+                            <BFormSelectOption
+                                value=""
+                                disabled
+                            >
+                                Classe
+                            </BFormSelectOption>
+                        </template>
+                    </BFormSelect>
                 </BCol>
             </BRow>
             <BRow
-                v-if="scholarYearsOptions.length > 0 && classeGroups.length > 0"
+                v-if="scholarYearsOptions.length > 0 && classeGroupsOptions.length > 0"
             >
                 <BCard
                     class="px-4 mt-2"
@@ -64,10 +73,10 @@
                         <h5>
                             Période
                             <BBadge>
-                                {{ period.period_num }}
+                                {{ period.period_mabel }}
                             </BBadge>
                             ({{ scholarYearsOptions.find(sYO => sYO.id === period.scholar_year).label }})
-                            {{ classeGroups.find(cG => cG.id === period.classe_group).label }}
+                            {{ classeGroupsOptions.find(cG => cG.id === period.classe_group).label }}
                         <!-- {{ classeGroups[period.classeGroup] }}                       -->
                         <!-- ({{ scholarYears.find((scholarYear) => scholarYear.id === period.scholarYear).value }}) -->
                         </h5>
@@ -114,8 +123,8 @@ export default {
             scholarYears: [],
             scholarYearsOptions: [],
             scholarYearsSelected: "",
-            classeGroups: [],
-            keyword: "",
+            classeGroupsOptions: [],
+            classeGroupsSelected:"",
             search: () => {
                 console.log(this.keyword);
                 this.findEntries();
@@ -143,11 +152,21 @@ export default {
         loadClasseGroups: function () {
             return axios.get("/core/api/classe_group/")
                 .then((response) => {
-                    this.classeGroups = response.data.results;
+                    const teachingLabel = new Map([
+                        [1,"Primaire"],
+                        [2,"Secondaire"],
+                        [3,"Maternel"]
+                    ]);
+                    this.classeGroupsOptions = response.data.results;
+                    this.classeGroupsOptions = response.data.results.map(item =>{
+                        item.label = item.label+" - "+teachingLabel.get(item.teaching);
+                        return item
+                    });
                 });
         },
         findEntries: function () {
-            return axios.get(`/report/api/period/?periodNum=${this.keyword}&scholarYear__id=${this.scholarYearsSelected}`)
+            return axios.get(`/report/api/period/?classe_group=${this.classeGroupsSelected}&scholar_year__id=${this.scholarYearsSelected}`)
+            
                 .then((response) => {
                     this.periodEntries = response.data.results;
                     this.periodEntriesCount = response.data.count;

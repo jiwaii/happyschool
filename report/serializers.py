@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from report.models import PeriodModel
+from report.models import PeriodModel, CotationModel, NoteModel
 
 
 class PeriodSerializer(serializers.ModelSerializer):
@@ -7,7 +7,7 @@ class PeriodSerializer(serializers.ModelSerializer):
         model = PeriodModel
         fields = [
             "id",
-            "period_num",
+            "period_label",
             "date_start",
             "date_end",
             "scholar_year",
@@ -17,30 +17,36 @@ class PeriodSerializer(serializers.ModelSerializer):
         validators = [
             serializers.UniqueTogetherValidator(
                 queryset=model.objects.all(),
-                fields=["scholar_year", "classe_group", "period_num"],
+                fields=["scholar_year", "classe_group", "period_label"],
                 message="Periode déjà existante !",
             )
         ]
 
     def validate(self, attrs):
-        # TODO : if modifying object exclude it from queryset.
-        # overlaped = False
         data = self.initial_data
-        print(f"SELF: {data}")
-        print(f"current insert p-{data['period_num']}: {data['date_start']} => {data['date_end']}")
         num_of_periods = PeriodModel.objects.filter(
             classe_group=data["classe_group"], scholar_year=data["scholar_year"]
         ).count()
         period_exist = False if num_of_periods == 0 else True
-        existingPeriods = PeriodModel.objects.filter(
-            classe_group=data["classe_group"], scholar_year=data["scholar_year"]
-        ).order_by("date_start")
 
-        ## Test Overlaping when have periods
+        if hasattr(self.instance, "pk"):
+            existingPeriods = (
+                PeriodModel.objects.filter(
+                    classe_group=data["classe_group"], scholar_year=data["scholar_year"]
+                )
+                .order_by("date_start")
+                .exclude(id=self.instance.pk)
+            )
+        else:
+            existingPeriods = PeriodModel.objects.filter(
+                classe_group=data["classe_group"], scholar_year=data["scholar_year"]
+            ).order_by("date_start")
+
+        ## Test Overlaping for each periods with same classe_group & scholar_year
         if period_exist:
             for p in existingPeriods:
                 print(
-                    f"p-{p.period_num}: {p.date_start} => {p.date_end} WITH new : {data['date_start']} => {data['date_end']}"
+                    f"p-{p.period_label}: {p.date_start} => {p.date_end} WITH new : {data['date_start']} => {data['date_end']}"
                 )
                 if (
                     data["date_start"] >= str(p.date_start)
@@ -56,3 +62,33 @@ class PeriodSerializer(serializers.ModelSerializer):
                     # break
 
         return attrs
+
+
+class CotationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CotationModel
+        fields = "__all__"
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NoteModel
+        fields = "__all__"
+
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=["cotation", "student_level"],
+                
+                message="élève déjà ajouté(e) dans la cotation",
+            )
+        ]
+
+    def validate(self, attrs):
+        print(attrs)
+        if attrs["note"] > attrs["cotation"].max_note:
+            raise serializers.ValidationError("La note est supérieur à la note maximale")
+        elif attrs["note"] < 0:
+            raise serializers.ValidationError("La note ne dois pas être inferieur à zéro")
+        else:
+            return attrs

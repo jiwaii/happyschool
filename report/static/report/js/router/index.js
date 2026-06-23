@@ -25,6 +25,8 @@ import Report_PeriodesList from "../Report_PeriodesList.vue";
 import Report_PeriodForm from "../Report_PeriodForm.vue";
 import Report_ClasseGroup from "../Report_ClasseGroup.vue";
 import Report_StudentLevel from "../Report_StudentLevel.vue";
+import Report_GivenCourse from "../Report_GivenCourse.vue";
+import Report_Cotation from "../Report_Cotation.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
@@ -72,6 +74,16 @@ const router = createRouter({
         {
             path:"/students_levels/",
             component: Report_StudentLevel,
+            props:true
+        },
+        {
+            path:"/givencourse/",
+            component: Report_GivenCourse,
+            props:true
+        },
+        {
+            path:"/cotation/:givencours",
+            component: Report_Cotation,
             props:true
         },
     ],

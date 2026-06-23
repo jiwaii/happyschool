@@ -13,7 +13,7 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
 from report.models import CotationModel, NoteModel, PeriodModel
-from report.serializers import PeriodSerializer
+from report.serializers import PeriodSerializer, CotationSerializer, NoteSerializer
 import json
 from core.utilities import get_menu
 
@@ -42,5 +42,16 @@ class PeriodViewSet(ModelViewSet):
     queryset = PeriodModel.objects.all()
     serializer_class = PeriodSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ["period_num", "scholar_year__id"]
+    filterset_fields = ["classe_group", "scholar_year__id"]
     search_fields = ["scholarYear__label"]
+
+
+class CotationViewSet(ModelViewSet):
+    queryset = CotationModel.objects.all()
+    serializer_class = CotationSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["given_course"]
+
+class NoteViewSet(ModelViewSet):
+    queryset = NoteModel.objects.all()
+    serializer_class = NoteSerializer
