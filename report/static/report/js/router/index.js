@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with Happyschool.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import ReportMenu from "../ReportMenu.vue";
 import Report_ScholaryearList from "../Report_ScholaryearList.vue";
 import Report_Scholaryear from "../Report_ScholaryearForm.vue";
@@ -27,6 +26,7 @@ import Report_ClasseGroup from "../Report_ClasseGroup.vue";
 import Report_StudentLevel from "../Report_StudentLevel.vue";
 import Report_GivenCourse from "../Report_GivenCourse.vue";
 import Report_Cotation from "../Report_Cotation.vue";
+import Report_CotationForm from "../Report_CotationForm.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
@@ -38,53 +38,58 @@ const router = createRouter({
         {
             path: "/scholaryears/",
             component: Report_ScholaryearList,
-            props: true
+            props: true,
         },
         {
             path: "/scholaryears_form/",
             component: Report_Scholaryear,
-            props: true
+            props: true,
         },
         {
-            path:"/scholaryears_edit/:id",
+            path: "/scholaryears_edit/:id",
             component: Report_Scholaryear,
-            props: true
+            props: true,
         },
         {
-            path:"/periods/",
+            path: "/periods/",
             component: Report_PeriodesList,
-            props:true
+            props: true,
 
         },
         {
-            path:"/period_form/",
+            path: "/period_form/",
             component: Report_PeriodForm,
-            props:true
+            props: true,
         },
         {
-            path:"/period_edit/:id",
+            path: "/period_edit/:id",
             component: Report_PeriodForm,
-            props:true
+            props: true,
         },
         {
-            path:"/grouped_classe/",
+            path: "/grouped_classe/",
             component: Report_ClasseGroup,
-            props:true
+            props: true,
         },
         {
-            path:"/students_levels/",
+            path: "/students_levels/",
             component: Report_StudentLevel,
-            props:true
+            props: true,
         },
         {
-            path:"/givencourse/",
+            path: "/givencourse/",
             component: Report_GivenCourse,
-            props:true
+            props: true,
         },
         {
-            path:"/cotation/:givencours",
+            path: "/cotation/:givencours",
             component: Report_Cotation,
-            props:true
+            props: true,
+        },
+        {
+            path: "/cotation_form/:givencours/:id",
+            component: Report_CotationForm,
+            props: true,
         },
     ],
     history: createWebHashHistory(),

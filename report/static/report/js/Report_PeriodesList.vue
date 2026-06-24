@@ -38,7 +38,7 @@
                         </template>
                     </BFormSelect>
                 </BCol>
-                
+
                 <BCol cols="5">
                     <BFormSelect
                         v-model="classeGroupsSelected"
@@ -124,7 +124,7 @@ export default {
             scholarYearsOptions: [],
             scholarYearsSelected: "",
             classeGroupsOptions: [],
-            classeGroupsSelected:"",
+            classeGroupsSelected: "",
             search: () => {
                 console.log(this.keyword);
                 this.findEntries();
@@ -153,20 +153,20 @@ export default {
             return axios.get("/core/api/classe_group/")
                 .then((response) => {
                     const teachingLabel = new Map([
-                        [1,"Primaire"],
-                        [2,"Secondaire"],
-                        [3,"Maternel"]
+                        [1, "Primaire"],
+                        [2, "Secondaire"],
+                        [3, "Maternel"],
                     ]);
                     this.classeGroupsOptions = response.data.results;
-                    this.classeGroupsOptions = response.data.results.map(item =>{
-                        item.label = item.label+" - "+teachingLabel.get(item.teaching);
-                        return item
+                    this.classeGroupsOptions = response.data.results.map((item) => {
+                        item.label = item.label + " - " + teachingLabel.get(item.teaching);
+                        return item;
                     });
                 });
         },
         findEntries: function () {
             return axios.get(`/report/api/period/?classe_group=${this.classeGroupsSelected}&scholar_year__id=${this.scholarYearsSelected}`)
-            
+
                 .then((response) => {
                     this.periodEntries = response.data.results;
                     this.periodEntriesCount = response.data.count;

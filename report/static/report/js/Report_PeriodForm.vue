@@ -59,16 +59,13 @@
 
                                 <b-form-group
                                     label="Numero de période"
-                                    label-for="input-periodNum"
+                                    label-for="input-periodLabel"
                                 >
                                     <b-form-input
-                                        id="input-periodNum"
-                                        type="number"
-                                        min="1"
-                                        max="10"
-                                        v-model="form.period_num"
+                                        id="input-periodLabel"
+                                        v-model="form.period_label"
                                     />
-                                    <b-form-invalid-feedback id="input-periodNum-feedback">
+                                    <b-form-invalid-feedback id="input-periodLabel-feedback">
                                         Existe déjà !
                                     </b-form-invalid-feedback>
                                 </b-form-group>
@@ -143,7 +140,7 @@ export default {
     data: function () {
         return {
             form: {
-                period_num: null,
+                period_label: null,
                 date_start: null,
                 date_end: null,
                 scholar_year: null,
@@ -171,7 +168,7 @@ export default {
                         });
                 } else {
                     console.log("post");
-                    axios.post("/report/api/period/", this.form, token).then((response) => {
+                    axios.post("/report/api/period/", this.form, token).then(() => {
                         this.$router.push("/periods/");
                     })
                         .catch((error) => {

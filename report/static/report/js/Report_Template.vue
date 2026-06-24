@@ -1,18 +1,14 @@
 <template>
     <BContainer>
-        <h1></h1>
-        
-        
+        <h1>Template Title</h1>
     </BContainer>
 </template>
 
 <script>
 
-import axios from "axios";
-
 export default {
     components: {
-        
+
     },
     data: function () {
         return {
@@ -20,10 +16,10 @@ export default {
         };
     },
     methods: {
-        
+
     },
     mounted: function () {
-        
+
     },
 };
 
