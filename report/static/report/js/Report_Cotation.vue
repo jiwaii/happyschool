@@ -1,7 +1,23 @@
 <template>
     <BContainer>
-        <h1>Mes cotations</h1>
+        <h2 v-if="givenCoursInfo">
+            Cotations
+            {{ givenCoursInfo.course.short_name }}
+            {{ givenCoursInfo.course.long_name }}
+        </h2>
+        <ul
+            v-if="givenCoursInfo"
+            style="display: inline-flex;list-style-type: none;"
+        >
+            <li
+                v-for="teacher in givenCoursInfo.teachers"
+                :key="teacher.id"
+            >
+                {{ teacher.fullname }} ,
+            </li>
+        </ul>
         <p>(devoirs, interrogations, examens)</p>
+
         <BRow>
             <BCol
                 id="nav-info"
@@ -22,7 +38,10 @@
                     </BButton>
                 </div>
             </BCol>
-            <BCol id="table">
+            <BCol
+                id="table"
+                lg="7"
+            >
                 <BTable
                     striped
                     hover
@@ -45,12 +64,27 @@
                             size="sm"
                             class="me-1"
                             variant="primary"
-                            :to="`/`"
+                            :to="`/cotation_notes/${id.value}`"
                         >
-                            Noter
+                            Voir (et évaluer)
                         </BButton>
                     </template>
                 </BTable>
+            </BCol>
+            <BCol
+                id="table-student-course"
+            >
+                <BTable
+                    striped
+                    hover
+                    :items="entriesStudents"
+                    :fields="fieldsStudents"
+                >
+                    <template #cell(full_name)="data">
+                        {{ data.item.student_level.student.first_name }} {{ data.item.student_level.student.last_name }}
+                        {{ data.item.student_level.classe.year }}{{ data.item.student_level.classe.letter.toUpperCase() }}
+                    </template>
+                </btable>
             </BCol>
         </BRow>
     </BContainer>
@@ -70,30 +104,58 @@ export default {
     },
     data: function () {
         return {
+            fullCoursTitle: "",
+            givenCoursInfo: null,
+            teachers: [],
             entries: [],
+            entriesStudents: [],
             fields: [
                 { key: "title", label: "Titre cot" },
                 { key: "max_note", label: "Note maximale" },
                 { key: "made_date", label: "En date du" },
-                { key: "id", label: "Option" },
+                { key: "id", label: "" },
+            ],
+            fieldsStudents: [
+                { key: "full_name", label: "Étudiant(e)s dans le cours" },
             ],
         };
     },
     methods: {
-        getCotations() {
+        getGivenCourseInfo() {
+            return axios.get(`/core/api/given_course_info/${this.givencours}`)
+                .then((response) => {
+                    if (response.data) {
+                        this.givenCoursInfo = response.data;
+                        // let data = response.data;
+                        // this.fullCoursTitle = `${data.course.short_name} ${data.display}`;
+                        // this.teachers = data.teachers;
+                    }
+                });
+        },
+        getCotationsList() {
             return axios.get(`/report/api/cotation/?given_course=${this.givencours}`)
                 .then((response) => {
-                    this.entries = response.data.results;
+                    if (response.data) {
+                        this.entries = response.data.results;
+                    }
+                });
+        },
+        getStudentInCourse() {
+            return axios.get(`/report/api/studentlevelcourse/?course=${this.givencours}`)
+                .then((response) => {
+                    if (response.data) {
+                        this.entriesStudents = response.data.results;
+                    }
                 });
         },
         convertDateFr: function (date) {
-            // return Moment(date).calendar();
-
             return DateTime.fromISO(date).toLocaleString();
         },
     },
     mounted: function () {
-        this.getCotations();
+        this.getGivenCourseInfo();
+        this.getCotationsList();
+        this.getStudentInCourse();
     },
 };
 

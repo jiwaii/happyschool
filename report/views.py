@@ -13,7 +13,8 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
 from report.models import CotationModel, NoteModel, PeriodModel
-from report.serializers import PeriodSerializer, CotationSerializer, NoteSerializer
+from report.serializers import PeriodSerializer, CotationSerializer, NoteSerializer,ResponsibleGivenCourseSerializer,StudentLevelCourseSerializer
+from core.models import ResponsibleModel, StudentLevelCourseModel
 import json
 from core.utilities import get_menu
 
@@ -47,11 +48,29 @@ class PeriodViewSet(ModelViewSet):
 
 
 class CotationViewSet(ModelViewSet):
-    queryset = CotationModel.objects.all()
+    queryset = CotationModel.objects.all().order_by("made_date")
     serializer_class = CotationSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["given_course"]
 
 class NoteViewSet(ModelViewSet):
-    queryset = NoteModel.objects.all()
+    queryset = NoteModel.objects.all().order_by("student_level__student__last_name")
     serializer_class = NoteSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["cotation"]
+
+
+class GivenCourseResponsibleViewSet(APIView):
+    def get(self, request, matricule=None):
+        responsible = ResponsibleModel.objects.get(matricule=matricule)
+        serializer = ResponsibleGivenCourseSerializer(responsible) 
+        return Response(serializer.data)
+        
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ["id"]
+    
+class StudentLevelCoursViewSet(ModelViewSet):
+    queryset = StudentLevelCourseModel.objects.all()
+    serializer_class = StudentLevelCourseSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["course"]

@@ -1,11 +1,9 @@
 <template>
+    <app-menu
+        :menu-info="menuInfo"
+    />
     <BApp>
         <div style="background-image: linear-gradient(180deg,#579fd1,#eaf3fc);padding: 1%; min-height: 700px;">
-            <!-- <app-menu
-            :menu-info="menuInfo"
-        /> -->
-            <BBreadcrumb :items="menuBread" />
-
             <router-view v-slot="{ Component}">
                 <Transition name="fade">
                     <component :is="Component" />
@@ -32,7 +30,6 @@ export default {
     mounted: function () {
         // eslint-disable-next-line no-undef
         this.menuInfo = menu;
-        this.menuBread = "Menu Principal";
     },
     components: {
         "app-menu": Menu,

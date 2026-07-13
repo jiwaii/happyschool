@@ -14,7 +14,7 @@
                     >
                         <BCard
 
-                            title="Cours"
+                            title="Mes cours"
                             img-src="/static/report/img/stains-purple-courses.jpg"
                             img-alt="Image"
                             img-top

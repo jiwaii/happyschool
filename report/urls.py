@@ -25,12 +25,15 @@ from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
     path("", ReportMenuView.as_view()),
+    path("api/coursesresponsible/<int:matricule>/", views.GivenCourseResponsibleViewSet.as_view()),
 ]
 
 router = DefaultRouter()
 router.register(r"api/period", views.PeriodViewSet)
 router.register(r"api/cotation", views.CotationViewSet)
 router.register(r"api/note", views.NoteViewSet)
+router.register(r"api/studentlevelcourse", views.StudentLevelCoursViewSet)
+
 
 
 urlpatterns += router.urls

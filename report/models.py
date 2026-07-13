@@ -48,7 +48,7 @@ class PeriodModel(models.Model):
 
 class CotationModel(models.Model):
     title = models.CharField()
-    max_note = models.IntegerField()
+    max_note = models.DecimalField(decimal_places=2,max_digits=5)
     made_date = models.DateField()
     given_course = models.ForeignKey(GivenCourseModel, on_delete=models.CASCADE)
 
@@ -57,10 +57,18 @@ class CotationModel(models.Model):
 
 
 class NoteModel(models.Model):
-    note = models.IntegerField(default=0)
-    comment = models.CharField()
+    note = models.DecimalField(default=0,decimal_places=2, max_digits=5)
+    comment = models.CharField(null=True,blank=True)
     cotation = models.ForeignKey(CotationModel, on_delete=models.CASCADE)
     student_level = models.ForeignKey(StudentLevelModel, on_delete=models.CASCADE)
+    
+    @property
+    def student_name(self):
+        return f"{self.student_level.student.first_name} {self.student_level.student.last_name}"
+   
+    @property
+    def max_note(self):
+        return self.cotation.max_note
 
 
 # class PeriodCommentModel(models.Model):

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from report.models import PeriodModel, CotationModel, NoteModel
+from core.models import ResponsibleModel, StudentLevelCourseModel
 
 
 class PeriodSerializer(serializers.ModelSerializer):
@@ -73,7 +74,8 @@ class CotationSerializer(serializers.ModelSerializer):
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = NoteModel
-        fields = "__all__"
+        fields = ["id","note","comment","cotation","student_level","student_name","max_note"]
+        # depth = 2
 
         validators = [
             serializers.UniqueTogetherValidator(
@@ -83,7 +85,7 @@ class NoteSerializer(serializers.ModelSerializer):
                 message="élève déjà ajouté(e) dans la cotation",
             )
         ]
-
+    
     def validate(self, attrs):
         print(attrs)
         if attrs["note"] > attrs["cotation"].max_note:
@@ -92,3 +94,16 @@ class NoteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("La note ne dois pas être inferieur à zéro")
         else:
             return attrs
+
+class ResponsibleGivenCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResponsibleModel
+        fields = ["id","first_name","last_name","courses"]
+        # fields = "__all__"  
+        depth = 2
+            
+class StudentLevelCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentLevelCourseModel
+        fields = ["id","date_start","date_end","student_level"]
+        depth = 2

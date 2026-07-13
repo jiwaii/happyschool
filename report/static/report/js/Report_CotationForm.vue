@@ -116,6 +116,13 @@ export default {
                 made_date: null,
                 given_course: this.givencours,
             },
+            studentsInCourse: [],
+            form_note: {
+                note: null,
+                comment: null,
+                cotation: null,
+                student_level: null,
+            },
         };
     },
     methods: {
@@ -133,29 +140,51 @@ export default {
                     }
                 });
         },
+        getStudentInCourse() {
+            return axios.get(`/report/api/studentlevelcourse/?course=${this.givencours}`)
+                .then((response) => {
+                    if (response.data) {
+                        this.studentsInCourse = response.data.results;
+                    }
+                });
+        },
+        createNote(cotation_id, student_level_id) {
+            this.form_note.note = 0;
+            this.form_note.comment = "";
+            this.form_note.cotation = cotation_id;
+            this.form_note.student_level = student_level_id;
+            axios.post("/report/api/note/", this.form_note, token).catch((err) => {
+                console.log(err);
+            });
+        },
         convertDateFr: function (date) {
             // return Moment(date).calendar();
 
             return DateTime.fromISO(date).toLocaleString();
         },
         submit(evalRedirect) {
-            // TODO : make note for redirection
-            let url = (evalRedirect == true) ? "/" : `/cotation/${this.givencours}`;
+            let url = "";
             if (this.id != "0") {
                 axios.put(`/report/api/cotation/${this.id}/`, this.form, token).then(
                     () => {
+                        url = (evalRedirect == true) ? `/cotation_notes/${this.id}` : `/cotation/${this.givencours}`;
                         this.$router.push(url);
                     }).catch(
                     (error) => {
                         console.log(error);
                     });
             } else {
-                console.log("post");
-                axios.post("/report/api/cotation/", this.form, token).then(() => {
+                axios.post("/report/api/cotation/", this.form, token).then((response) => {
+                    let newCotation_id = response.data.id;
+                    this.studentsInCourse.forEach(
+                        (student) => {
+                            this.createNote(newCotation_id, student.student_level.id);
+                        },
+                    );
+                    let url = (evalRedirect == true) ? `/cotation_notes/${newCotation_id}` : `/cotation/${this.givencours}`;
                     this.$router.push(url);
                 })
                     .catch((error) => {
-                        // console.error("error GRR "+error);
                         console.log(error.response.data);
                         alert(error.response.data.non_field_errors);
                     })
@@ -166,10 +195,23 @@ export default {
         },
         deleteItem() {
             console.log("delete");
+            axios.delete(`/report/api/cotation/${this.id}/`, token).then(
+                () => {
+                    this.$router.push(`/cotation/${this.givencours}`);
+                }).catch(
+                (error) => {
+                    console.log(error);
+                });
         },
     },
     mounted: function () {
-        if (this.id != "0") this.loadItem();
+        if (this.id != "0") {
+            // update cotation: load items only
+            this.loadItem();
+        } else {
+            // new cotations : load Students to create notes
+            this.getStudentInCourse();
+        };
         this.getCotations();
     },
 };

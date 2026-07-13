@@ -1,6 +1,7 @@
 <template>
     <BContainer>
         <h1>Mes cours donnés</h1>
+
         <BRow>
             <BCol
                 id="nav-info"
@@ -21,9 +22,11 @@
                     :items="entries"
                     :fields="btableFields"
                 >
-                    <template #cell(course)="data">
-                        {{ data.value.short_name }} {{ data.value.long_name }}
-                        <!-- {{ data.value.scolar_year }} -->
+                    <template #cell(full_label)="full_label">
+                        {{ full_label.item.course.short_name }}
+                        {{ full_label.item.course.long_name }} -
+                        {{ full_label.item.group.toUpperCase() }}
+                        ({{ full_label.item.scholar_year.label }})
                     </template>
                     <template #cell(id)="id">
                         <BButton
@@ -50,19 +53,29 @@ export default {
     },
     data: function () {
         return {
-            btableFields: ["course", { key: "id", label: "Option" }],
+            btableFields: [
+                { key: "full_label", label: "Cours enseigné" },
+                { key: "id", label: "" }],
             entries: [],
+            userMatricule: null,
+            studentCourseEntries: [],
         };
     },
     methods: {
         getGivenCourses() {
-            return axios.get("/core/api/given_course_info/")
+            return axios.get(`/report/api/coursesresponsible/${this.userMatricule}/`)
                 .then((response) => {
-                    this.entries = response.data.results;
+                    this.entries = response.data.courses;
+                    console.log(this.entries);
                 });
+        },
+        getUserMatricule() {
+            // eslint-disable-next-line no-undef
+            if (user_properties && user_properties.matricule) this.userMatricule = user_properties.matricule;
         },
     },
     mounted: function () {
+        this.getUserMatricule();
         this.getGivenCourses();
     },
 };

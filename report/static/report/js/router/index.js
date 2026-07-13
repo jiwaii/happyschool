@@ -17,7 +17,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with Happyschool.  If not, see <http://www.gnu.org/licenses/>.
 
-import ReportMenu from "../ReportMenu.vue";
+import Report_Menu from "../Report_Menu.vue";
 import Report_ScholaryearList from "../Report_ScholaryearList.vue";
 import Report_Scholaryear from "../Report_ScholaryearForm.vue";
 import Report_PeriodesList from "../Report_PeriodesList.vue";
@@ -27,13 +27,14 @@ import Report_StudentLevel from "../Report_StudentLevel.vue";
 import Report_GivenCourse from "../Report_GivenCourse.vue";
 import Report_Cotation from "../Report_Cotation.vue";
 import Report_CotationForm from "../Report_CotationForm.vue";
+import Report_Notes from "../Report_Notes.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
     routes: [
         {
             path: "/",
-            component: ReportMenu,
+            component: Report_Menu,
         },
         {
             path: "/scholaryears/",
@@ -89,6 +90,11 @@ const router = createRouter({
         {
             path: "/cotation_form/:givencours/:id",
             component: Report_CotationForm,
+            props: true,
+        },
+        {
+            path: "/cotation_notes/:id",
+            component: Report_Notes,
             props: true,
         },
     ],
